@@ -1,8 +1,19 @@
+import { TimerWidget } from './widgets/timer/ui/TimerWidget';
+
 function App() {
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        gap: '20px',
+      }}
+    >
       <h1>pomoDORONG</h1>
-      <p>뽀모도로 타이머 프로젝트</p>
+      <TimerWidget />
     </div>
   );
 }
