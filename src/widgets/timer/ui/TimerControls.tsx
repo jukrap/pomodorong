@@ -8,7 +8,12 @@ export function TimerControls() {
   const reset = useTimerStore(state => state.reset);
 
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        gap: '16px',
+      }}
+    >
       {status === 'running' ? (
         <Button onClick={pause}>일시정지</Button>
       ) : (

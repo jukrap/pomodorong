@@ -11,9 +11,33 @@ export function TimerDisplay() {
   const formatTime = (num: number) => String(num).padStart(2, '0');
 
   return (
-    <div>
-      <h2>{mode === 'work' ? '작업 시간' : '휴식 시간'}</h2>
-      <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '20px',
+      }}
+    >
+      <h2
+        style={{
+          fontSize: '24px',
+          fontWeight: '600',
+          color: mode === 'work' ? '#4a5568' : '#2d3748',
+        }}
+      >
+        {mode === 'work' ? '🔥 작업 시간' : '☕ 휴식 시간'}
+      </h2>
+
+      <div
+        style={{
+          fontSize: '72px',
+          fontWeight: '700',
+          fontFamily: 'monospace',
+          color: '#2d2d2d',
+          letterSpacing: '4px',
+        }}
+      >
         {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}
       </div>
     </div>

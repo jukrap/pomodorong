@@ -2,8 +2,8 @@ import type { Timer } from './types';
 import { create } from 'zustand';
 
 export const DEFAULT_TIMER: Timer = {
-  workDuration: 120,
-  breakDuration: 30,
+  workDuration: 1,
+  breakDuration: 0.5,
   currentTime: 0,
   mode: 'work',
   status: 'idle',
