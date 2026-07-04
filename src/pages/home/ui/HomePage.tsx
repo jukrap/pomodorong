@@ -10,6 +10,7 @@ import {
   type ToastMessage,
   type ToastTone,
 } from '../../../shared/ui/Toast/Toast';
+import { AmbientAudioField } from './AmbientAudioField';
 import './HomePage.css';
 
 export function HomePage() {
@@ -46,6 +47,8 @@ export function HomePage() {
 
   return (
     <div className={`home-page home-page--${mode}`}>
+      <AmbientAudioField />
+
       <header className="home-page__header">
         <div className="home-page__brand">
           <h1>

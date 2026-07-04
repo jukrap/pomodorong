@@ -23,11 +23,16 @@
   --panel-shadow: var(--surface-shadow);
 
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
   padding: 32px 30px 24px;
   color: var(--ink);
 }
 
 .home-page__header {
+  position: relative;
+  z-index: 1;
   width: min(1250px, 100%);
   margin: 0 auto;
   display: flex;
@@ -110,6 +115,8 @@
 }
 
 .home-page__workspace {
+  position: relative;
+  z-index: 1;
   width: min(1030px, 100%);
   margin: 42px auto 0;
   display: grid;
