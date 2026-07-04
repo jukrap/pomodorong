@@ -1,5 +1,5 @@
-import type { CSSProperties } from 'react';
 import { useTimerStore } from '../../../entities/timer/model/store';
+import { LiquidTimerText } from './LiquidTimerText';
 import './TimerDisplay.css';
 
 export function TimerDisplay() {
@@ -22,7 +22,6 @@ export function TimerDisplay() {
     totalSeconds > 0 && !(status === 'idle' && currentTime === 0)
       ? Math.max(0, Math.min(1, 1 - currentTime / totalSeconds))
       : 0;
-  const waveLevel = Math.max(12, Math.round(elapsedProgress * 100));
 
   return (
     <div className="timer-display">
@@ -34,22 +33,12 @@ export function TimerDisplay() {
         </div>
       </div>
 
-      <div
-        className="timer-display__time-shell"
-        aria-label={`Remaining time ${displayTime}`}
-        style={
-          {
-            '--timer-wave-level': `${waveLevel}%`,
-          } as CSSProperties
-        }
-      >
-        <span className="timer-display__time" aria-hidden="true">
-          {displayTime}
-        </span>
-        <span className="timer-display__time-wave" aria-hidden="true">
-          {displayTime}
-        </span>
-      </div>
+      <LiquidTimerText
+        value={displayTime}
+        progress={elapsedProgress}
+        mode={mode}
+        label={`Remaining time ${displayTime}`}
+      />
     </div>
   );
 }

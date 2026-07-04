@@ -1,0 +1,78 @@
+.liquid-timer {
+  width: min(720px, calc(100vw - 32px));
+  max-width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.liquid-timer__base,
+.liquid-timer__mask-text {
+  font-family:
+    Inter,
+    'SF Pro Display',
+    'SF Pro Text',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  font-size: 136px;
+  font-weight: 640;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.liquid-timer__base {
+  fill: var(--ink, #07101f);
+}
+
+.liquid-timer__fill {
+  opacity: 0.16;
+}
+
+.liquid-timer__wave {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.liquid-timer__wave--front {
+  opacity: 0.68;
+}
+
+.liquid-timer__wave--back {
+  opacity: 0.36;
+}
+
+.liquid-timer__wave--shine {
+  opacity: 0.18;
+  mix-blend-mode: screen;
+}
+
+.liquid-timer--break .liquid-timer__fill,
+.liquid-timer--break .liquid-timer__wave {
+  filter: saturate(1.08);
+}
+
+@media (max-width: 900px) {
+  .liquid-timer {
+    width: min(620px, calc(100vw - 32px));
+  }
+}
+
+@media (max-width: 760px) {
+  .liquid-timer {
+    width: min(460px, calc(100vw - 32px));
+  }
+}
+
+@media (max-width: 520px) {
+  .liquid-timer {
+    width: min(360px, calc(100vw - 28px));
+  }
+}
+
+@media (max-width: 380px) {
+  .liquid-timer {
+    width: min(318px, calc(100vw - 28px));
+  }
+}

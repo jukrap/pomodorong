@@ -1,3 +1,4 @@
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { useMusicStackStore } from '../../../entities/music-stack/model/store';
 import { formatTrackDuration } from '../../../entities/track/lib/formatTrackDuration';
@@ -22,6 +23,7 @@ function formatClockDuration(durationSeconds?: number) {
 }
 
 export function CurrentTrack() {
+  const shouldReduceMotion = useReducedMotion();
   const mode = useTimerStore(state => state.mode);
   const workTracks = useMusicStackStore(state => state.workTracks);
   const breakTracks = useMusicStackStore(state => state.breakTracks);
@@ -37,39 +39,50 @@ export function CurrentTrack() {
   }
 
   return (
-    <div className="current-track">
-      <img
-        className="current-track__thumb"
-        src={currentTrack.thumbnailUrl}
-        alt={currentTrack.title}
-        onError={event => {
-          event.currentTarget.src = getTrackFallbackThumbnail(
-            currentTrack.videoId
-          );
-        }}
-      />
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        className="current-track"
+        key={`${mode}-${currentTrack.videoId}`}
+        initial={
+          shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }
+        }
+        animate={{ opacity: 1, y: 0 }}
+        exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+        transition={{ duration: shouldReduceMotion ? 0.01 : 0.18 }}
+      >
+        <img
+          className="current-track__thumb"
+          src={currentTrack.thumbnailUrl}
+          alt={currentTrack.title}
+          onError={event => {
+            event.currentTarget.src = getTrackFallbackThumbnail(
+              currentTrack.videoId
+            );
+          }}
+        />
 
-      <div className="current-track__body">
-        <span className="current-track__eyebrow">NOW PLAYING</span>
-        <strong
-          className="current-track__title"
-          data-testid="current-track-title"
-        >
-          {currentTrack.title}
-        </strong>
-        <span className="current-track__duration">
-          {mode === 'work' ? 'Focus stack' : 'Break stack'} ·{' '}
-          {currentTrackIndex + 1}/{tracks.length} ·{' '}
-          {formatTrackDuration(currentTrack.durationSeconds)}
-        </span>
-        <div className="current-track__timeline" aria-hidden="true">
-          <span />
+        <div className="current-track__body">
+          <span className="current-track__eyebrow">NOW PLAYING</span>
+          <strong
+            className="current-track__title"
+            data-testid="current-track-title"
+          >
+            {currentTrack.title}
+          </strong>
+          <span className="current-track__duration">
+            {mode === 'work' ? 'Focus stack' : 'Break stack'} ·{' '}
+            {currentTrackIndex + 1}/{tracks.length} ·{' '}
+            {formatTrackDuration(currentTrack.durationSeconds)}
+          </span>
+          <div className="current-track__timeline" aria-hidden="true">
+            <span />
+          </div>
+          <div className="current-track__timecodes" aria-hidden="true">
+            <span>0:00</span>
+            <span>{formatClockDuration(currentTrack.durationSeconds)}</span>
+          </div>
         </div>
-        <div className="current-track__timecodes" aria-hidden="true">
-          <span>0:00</span>
-          <span>{formatClockDuration(currentTrack.durationSeconds)}</span>
-        </div>
-      </div>
-    </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

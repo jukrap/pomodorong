@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'motion/react';
 import { YouTubeProvider } from '../../../shared/api/providers/youtube';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { useMusicStackStore } from '../../../entities/music-stack/model/store';
@@ -6,6 +7,11 @@ import { CurrentTrack } from './CurrentTrack';
 import { PlaybackControls } from './PlaybackControls';
 import { getMusicPlayer, setMusicPlayer } from '../model/playerAdapter';
 import './MusicPlayer.css';
+
+const actionMotion = {
+  whileTap: { scale: 0.975 },
+  transition: { type: 'spring' as const, stiffness: 520, damping: 34 },
+};
 
 export function MusicPlayer() {
   const playerRef = useRef<YouTubeProvider | null>(null);
@@ -297,23 +303,25 @@ export function MusicPlayer() {
                 aria-label="Media controls"
               >
                 <PlaybackControls />
-                <button
+                <motion.button
                   className="music-player__action"
                   type="button"
                   onClick={handleRetry}
                   data-testid="retry-player"
+                  {...actionMotion}
                 >
                   Retry
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   className="music-player__action"
                   type="button"
                   onClick={handleOpenInYouTube}
                   disabled={!currentTrack}
                   data-testid="open-youtube"
+                  {...actionMotion}
                 >
                   Open in YouTube
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>

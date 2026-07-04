@@ -1,5 +1,11 @@
+import { motion } from 'motion/react';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import './TimerControls.css';
+
+const buttonMotion = {
+  whileTap: { scale: 0.985 },
+  transition: { type: 'spring' as const, stiffness: 520, damping: 34 },
+};
 
 export function TimerControls() {
   const status = useTimerStore(state => state.status);
@@ -10,33 +16,36 @@ export function TimerControls() {
   return (
     <div className="timer-controls" aria-label="Timer controls">
       {status === 'running' ? (
-        <button
+        <motion.button
           className="timer-controls__button timer-controls__button--primary"
           type="button"
           onClick={pause}
+          {...buttonMotion}
         >
           <span aria-hidden="true">Ⅱ</span>
           Pause
-        </button>
+        </motion.button>
       ) : (
-        <button
+        <motion.button
           className="timer-controls__button timer-controls__button--primary"
           type="button"
           onClick={start}
+          {...buttonMotion}
         >
           <span aria-hidden="true">▶</span>
           Start
-        </button>
+        </motion.button>
       )}
 
-      <button
+      <motion.button
         className="timer-controls__button timer-controls__button--secondary"
         type="button"
         onClick={reset}
+        {...buttonMotion}
       >
         <span aria-hidden="true">↻</span>
         Reset
-      </button>
+      </motion.button>
     </div>
   );
 }

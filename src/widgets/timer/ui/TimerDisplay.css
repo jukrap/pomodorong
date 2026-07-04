@@ -1,4 +1,5 @@
 .timer-display {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,111 +47,9 @@
   font-weight: 600;
 }
 
-.timer-display__time-shell {
-  position: relative;
-  max-width: 100%;
-  display: grid;
-  place-items: center;
-  isolation: isolate;
-  --timer-wave-level: 12%;
-}
-
-.timer-display__time,
-.timer-display__time-wave {
-  grid-area: 1 / 1;
-  font-family:
-    Inter,
-    'SF Pro Display',
-    'SF Pro Text',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
-  font-size: 136px;
-  line-height: 0.95;
-  font-weight: 600;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink, #07101f);
-  text-shadow: 0 8px 24px rgba(7, 16, 31, 0.1);
-  white-space: nowrap;
-}
-
-.timer-display__time-wave {
-  color: transparent;
-  opacity: 0.56;
-  text-shadow: none;
-  background:
-    radial-gradient(
-      44px 18px at 22px calc(100% - var(--timer-wave-level)),
-      rgba(255, 73, 63, 0.68) 0 42%,
-      transparent 45%
-    ),
-    radial-gradient(
-      58px 22px at 86px calc(100% - var(--timer-wave-level) + 8px),
-      rgba(36, 168, 154, 0.48) 0 42%,
-      transparent 45%
-    ),
-    radial-gradient(
-      64px 26px at 142px calc(100% - var(--timer-wave-level) - 4px),
-      rgba(255, 73, 63, 0.42) 0 42%,
-      transparent 45%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(255, 73, 63, 0.5) 0,
-      rgba(36, 168, 154, 0.32) var(--timer-wave-level),
-      transparent var(--timer-wave-level)
-    );
-  background-size:
-    170px 100%,
-    210px 100%,
-    260px 100%,
-    100% 100%;
-  background-position:
-    0 0,
-    42px 0,
-    86px 0,
-    0 0;
-  background-clip: text;
-  -webkit-background-clip: text;
-  clip-path: inset(calc(100% - var(--timer-wave-level)) 0 0 0);
-  animation: timer-wave-flow 5.4s linear infinite;
-}
-
-@keyframes timer-wave-flow {
-  from {
-    background-position:
-      0 0,
-      42px 0,
-      86px 0,
-      0 0;
-  }
-
-  to {
-    background-position:
-      170px 0,
-      -168px 0,
-      346px 0,
-      0 0;
-  }
-}
-
-@media (max-width: 900px) {
-  .timer-display__time,
-  .timer-display__time-wave {
-    font-size: 112px;
-  }
-}
-
 @media (max-width: 760px) {
   .timer-display {
     gap: 20px;
-  }
-
-  .timer-display__time,
-  .timer-display__time-wave {
-    font-size: 72px;
   }
 }
 
@@ -161,28 +60,5 @@
 
   .timer-display__mode-copy span {
     font-size: 14px;
-  }
-
-  .timer-display__time,
-  .timer-display__time-wave {
-    font-size: 52px;
-  }
-}
-
-@media (max-width: 380px) {
-  .timer-display__time,
-  .timer-display__time-wave {
-    font-size: 44px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .timer-display__time-wave {
-    animation: none;
-    background-position:
-      24px 0,
-      60px 0,
-      110px 0,
-      0 0;
   }
 }

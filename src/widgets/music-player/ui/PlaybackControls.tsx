@@ -1,6 +1,12 @@
+import { motion } from 'motion/react';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { useMusicStackStore } from '../../../entities/music-stack/model/store';
 import { getMusicPlayer } from '../model/playerAdapter';
+
+const buttonMotion = {
+  whileTap: { scale: 0.975 },
+  transition: { type: 'spring' as const, stiffness: 520, damping: 34 },
+};
 
 export function PlaybackControls() {
   const mode = useTimerStore(state => state.mode);
@@ -45,15 +51,16 @@ export function PlaybackControls() {
 
   return (
     <div className="playback-controls">
-      <button
+      <motion.button
         className="music-player__action music-player__action--primary"
         type="button"
         onClick={handleNext}
         disabled={tracks.length <= 1}
         data-testid="next-track"
+        {...buttonMotion}
       >
         Next
-      </button>
+      </motion.button>
     </div>
   );
 }

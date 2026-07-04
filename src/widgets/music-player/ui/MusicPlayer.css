@@ -150,7 +150,7 @@
   font-weight: 700;
   cursor: pointer;
   transition:
-    transform 180ms ease,
+    filter 180ms ease,
     background-color 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease;
@@ -158,7 +158,7 @@
 }
 
 .music-player__action:hover:not(:disabled) {
-  transform: translateY(-1px);
+  filter: saturate(1.02);
   border-color: rgba(7, 16, 31, 0.18);
   box-shadow: var(--surface-shadow-soft, 0 8px 18px rgba(7, 16, 31, 0.06));
 }

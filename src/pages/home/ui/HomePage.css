@@ -53,7 +53,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 20px;
+  gap: 18px;
   color: var(--ink);
 }
 
@@ -75,39 +75,32 @@
   color: #24a89a;
 }
 
-.home-page__divider {
-  width: 1px;
-  height: 24px;
-  background: var(--line);
-}
-
-.home-page__settings,
-.home-page__menu-mark {
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  cursor: pointer;
-}
-
 .home-page__settings {
+  min-height: 38px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  padding: 0 11px;
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--ink);
   font-size: 14px;
   font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
-.home-page__menu-mark {
-  width: 36px;
-  height: 36px;
-  display: inline-grid;
-  place-items: center;
-  font-size: 26px;
-  line-height: 1;
+.home-page__settings:hover {
+  border-color: rgba(7, 16, 31, 0.08);
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: var(--surface-shadow-soft);
 }
 
-.home-page__settings:focus-visible,
-.home-page__menu-mark:focus-visible {
+.home-page__settings:focus-visible {
   border-radius: 10px;
   outline: 3px solid rgba(255, 73, 63, 0.22);
   outline-offset: 4px;
@@ -166,10 +159,12 @@
   }
 
   .home-page__settings {
-    display: none;
+    width: 40px;
+    padding: 0;
+    justify-content: center;
   }
 
-  .home-page__divider {
+  .home-page__settings-label {
     display: none;
   }
 
