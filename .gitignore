@@ -32,3 +32,6 @@ dist-ssr
 
 # Other
 _회고
+docs
+.ai-agent-playbook/
+AGENTS.md
