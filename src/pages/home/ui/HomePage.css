@@ -1,11 +1,34 @@
 .home-page {
+  --accent: #ff493f;
+  --accent-soft: rgba(255, 73, 63, 0.12);
+  --ink: #07101f;
+  --muted: #6d7686;
+  --line: rgba(7, 16, 31, 0.1);
+  --panel: rgba(255, 255, 255, 0.78);
+  --panel-strong: rgba(255, 255, 255, 0.9);
+  --surface-raised: rgba(255, 255, 255, 0.86);
+  --surface-border: rgba(7, 16, 31, 0.08);
+  --surface-shadow:
+    -14px -14px 32px rgba(255, 255, 255, 0.92),
+    18px 22px 48px rgba(23, 34, 51, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -1px 0 rgba(7, 16, 31, 0.04);
+  --surface-shadow-soft:
+    -9px -9px 22px rgba(255, 255, 255, 0.88),
+    12px 14px 30px rgba(23, 34, 51, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  --surface-pressed:
+    inset 7px 7px 16px rgba(23, 34, 51, 0.08),
+    inset -7px -7px 16px rgba(255, 255, 255, 0.9);
+  --panel-shadow: var(--surface-shadow);
+
   min-height: 100vh;
-  padding: 30px 28px 56px;
-  color: #1d1d1f;
+  padding: 32px 30px 24px;
+  color: var(--ink);
 }
 
 .home-page__header {
-  width: min(1120px, 100%);
+  width: min(1250px, 100%);
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -13,76 +36,110 @@
   gap: 24px;
 }
 
-.home-page__label {
-  margin-bottom: 7px;
-  color: #86868b;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.home-page__header h1 {
-  color: #1d1d1f;
+.home-page__brand h1 {
+  color: var(--ink);
   font-size: 28px;
   line-height: 1;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.home-page__brand h1 span,
+.home-page__brand h1 strong {
+  font-weight: 700;
+}
+
+.home-page__utility {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  color: var(--ink);
 }
 
 .home-page__status {
-  min-width: 126px;
-  display: grid;
-  gap: 4px;
-  padding: 12px 16px;
-  border: 1px solid rgba(29, 29, 31, 0.08);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
-}
-
-.home-page__status span {
-  color: #86868b;
-  font-size: 11px;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .home-page__status strong {
-  color: #ff3b30;
-  font-size: 15px;
-  line-height: 1.1;
+  color: var(--accent);
+  font-weight: 700;
 }
 
 .home-page--break .home-page__status strong {
-  color: #00a885;
+  color: #24a89a;
+}
+
+.home-page__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--line);
+}
+
+.home-page__settings,
+.home-page__menu-mark {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.home-page__settings {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.home-page__menu-mark {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.home-page__settings:focus-visible,
+.home-page__menu-mark:focus-visible {
+  border-radius: 10px;
+  outline: 3px solid rgba(255, 73, 63, 0.22);
+  outline-offset: 4px;
 }
 
 .home-page__workspace {
-  width: min(1120px, 100%);
-  margin: 62px auto 0;
+  width: min(1030px, 100%);
+  margin: 42px auto 0;
   display: grid;
   justify-items: center;
-  gap: 28px;
+  gap: 22px;
 }
 
 .home-page__timer-stage {
   width: 100%;
-  min-height: 500px;
+  min-height: 388px;
   display: grid;
   place-items: center;
-  padding: 18px 0 20px;
+  padding: 0;
 }
 
 .home-page__media-stage {
-  width: min(920px, 100%);
+  width: 100%;
 }
 
 @media (max-width: 760px) {
   .home-page {
-    padding: 24px 18px 40px;
+    padding: 24px 16px 34px;
   }
 
   .home-page__workspace {
-    margin-top: 42px;
+    margin-top: 44px;
     gap: 22px;
   }
 
@@ -93,21 +150,34 @@
 
 @media (max-width: 560px) {
   .home-page {
-    padding: 20px 14px 34px;
+    padding: 22px 14px 32px;
   }
 
   .home-page__header {
     align-items: flex-start;
-    flex-direction: column;
-    gap: 16px;
+  }
+
+  .home-page__brand h1 {
+    font-size: 27px;
   }
 
   .home-page__status {
-    width: 100%;
-    border-radius: 18px;
+    display: none;
+  }
+
+  .home-page__settings {
+    display: none;
+  }
+
+  .home-page__divider {
+    display: none;
+  }
+
+  .home-page__workspace {
+    margin-top: 44px;
   }
 
   .home-page__timer-stage {
-    min-height: 360px;
+    min-height: 418px;
   }
 }

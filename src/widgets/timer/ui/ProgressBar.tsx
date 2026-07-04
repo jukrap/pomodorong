@@ -23,7 +23,7 @@ export function ProgressBar() {
           style={{ width: `${elapsedProgress}%` }}
         />
       </div>
-      <span>{Math.round(progress)}% 남음</span>
+      <span>{Math.round(progress)}% remaining</span>
     </div>
   );
 }

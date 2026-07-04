@@ -1,4 +1,3 @@
-/* 리셋 */
 * {
   margin: 0;
   padding: 0;
@@ -7,15 +6,28 @@
 
 body {
   font-family:
-    'Pretendard',
+    Inter,
+    'SF Pro Display',
+    'SF Pro Text',
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
     Roboto,
     'Helvetica Neue',
     sans-serif;
-  background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 44%, #eef0f3 100%);
-  color: #1d1d1f;
+  background:
+    radial-gradient(
+      circle at 50% 10%,
+      rgba(238, 243, 250, 0.78),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 50% 86%,
+      rgba(230, 234, 241, 0.42),
+      transparent 36%
+    ),
+    linear-gradient(180deg, #ffffff 0%, #fbfcfe 52%, #f5f7fa 100%);
+  color: #07101f;
   min-height: 100vh;
 }
 
@@ -32,7 +44,6 @@ button {
   background: rgba(0, 122, 255, 0.18);
 }
 
-/* 폰트 부드럽게 */
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

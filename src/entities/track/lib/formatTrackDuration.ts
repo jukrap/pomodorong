@@ -1,12 +1,24 @@
 export function formatTrackDuration(durationSeconds?: number) {
   if (durationSeconds === 0) {
-    return '라이브 스트림';
+    return 'Live stream';
   }
 
   if (!durationSeconds) {
-    return '길이 미확인';
+    return 'Unknown length';
   }
 
   const minutes = Math.floor(durationSeconds / 60);
-  return `${minutes}분`;
+
+  if (minutes < 60) {
+    return `${minutes}m`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  if (remainingMinutes === 0) {
+    return `${hours}h`;
+  }
+
+  return `${hours}h ${remainingMinutes}m`;
 }

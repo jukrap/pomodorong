@@ -3,8 +3,6 @@ import { YouTubeProvider } from '../../../shared/api/providers/youtube';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { useMusicStackStore } from '../../../entities/music-stack/model/store';
 import { CurrentTrack } from './CurrentTrack';
-import { TrackList } from './TrackList';
-import { VolumeControl } from './VolumeControl';
 import { PlaybackControls } from './PlaybackControls';
 import { getMusicPlayer, setMusicPlayer } from '../model/playerAdapter';
 import './MusicPlayer.css';
@@ -17,6 +15,8 @@ export function MusicPlayer() {
   const mode = useTimerStore(state => state.mode);
   const timerStatus = useTimerStore(state => state.status);
 
+  const workTracks = useMusicStackStore(state => state.workTracks);
+  const breakTracks = useMusicStackStore(state => state.breakTracks);
   const getCurrentTracks = useMusicStackStore(state => state.getCurrentTracks);
   const currentTrackIndex = useMusicStackStore(
     state => state.currentTrackIndex
@@ -31,7 +31,7 @@ export function MusicPlayer() {
     state => state.setPlaybackStatus
   );
 
-  const tracks = getCurrentTracks(mode);
+  const tracks = mode === 'work' ? workTracks : breakTracks;
   const currentTrack = tracks[currentTrackIndex] ?? null;
   const hasActionableIssue =
     playbackStatus === 'error' ||
@@ -44,19 +44,19 @@ export function MusicPlayer() {
 
     switch (playbackStatus) {
       case 'loading':
-        return '연결 중';
+        return 'Connecting to player...';
       case 'ready':
-        return '연결됨';
+        return 'Player ready';
       case 'idle':
-        return tracks.length > 0 ? '대기 중' : '미디어 없음';
+        return tracks.length > 0 ? 'Ready' : 'No media';
       case 'error':
-        return '연결 실패';
+        return 'Connection issue';
       case 'autoplay-blocked':
-        return '자동재생 차단';
+        return 'Playback blocked';
       case 'unavailable':
-        return '재생 불가';
+        return 'Unavailable';
       default:
-        return '대기 중';
+        return 'Ready';
     }
   }, [playbackMessage, playbackStatus, tracks.length]);
 
@@ -72,7 +72,7 @@ export function MusicPlayer() {
       const next = useMusicStackStore.getState().nextTrack(currentMode);
 
       if (!next) {
-        setPlaybackStatus('unavailable', '재생할 다음 트랙이 없습니다.');
+        setPlaybackStatus('unavailable', 'No next track is available.');
         return;
       }
 
@@ -237,7 +237,7 @@ export function MusicPlayer() {
   ]);
 
   const handleRetry = () => {
-    setPlaybackStatus('loading', '연결 중');
+    setPlaybackStatus('loading', 'Connecting to player...');
     setRetryNonce(nonce => nonce + 1);
   };
 
@@ -259,16 +259,7 @@ export function MusicPlayer() {
       aria-labelledby="music-player-title"
     >
       <div className="music-player__header">
-        <h2 id="music-player-title">
-          {mode === 'work' ? '작업 미디어' : '휴식 미디어'}
-        </h2>
-        <div
-          className={`music-player__connection music-player__connection--${playbackStatus}`}
-          aria-live={playbackStatus === 'ready' ? 'off' : 'polite'}
-        >
-          <span className="music-player__connection-dot" aria-hidden="true" />
-          <span data-testid="playback-status">{statusMessage}</span>
-        </div>
+        <h2 id="music-player-title">NOW PLAYING</h2>
       </div>
 
       {hasActionableIssue && (
@@ -282,36 +273,50 @@ export function MusicPlayer() {
 
       {tracks.length === 0 ? (
         <div className="music-player__empty">
-          <strong>이 모드에 등록된 트랙이 없습니다.</strong>
-          <span>타이머는 미디어 없이도 계속 사용할 수 있습니다.</span>
+          <strong>No videos in this mode.</strong>
+          <span>The timer still works without media.</span>
         </div>
       ) : (
         <>
           <div className="music-player__dock">
             <CurrentTrack />
-            <div className="music-player__actions" aria-label="미디어 제어">
-              <PlaybackControls />
-              <button
-                className="music-player__action"
-                type="button"
-                onClick={handleRetry}
-                data-testid="retry-player"
+            <div className="music-player__side">
+              <div
+                className={`music-player__connection music-player__connection--${playbackStatus}`}
+                aria-live={playbackStatus === 'ready' ? 'off' : 'polite'}
               >
-                재시도
-              </button>
-              <button
-                className="music-player__action"
-                type="button"
-                onClick={handleOpenInYouTube}
-                disabled={!currentTrack}
-                data-testid="open-youtube"
+                <span
+                  className="music-player__connection-dot"
+                  aria-hidden="true"
+                />
+                <span data-testid="playback-status">{statusMessage}</span>
+              </div>
+
+              <div
+                className="music-player__actions"
+                aria-label="Media controls"
               >
-                YouTube에서 열기
-              </button>
+                <PlaybackControls />
+                <button
+                  className="music-player__action"
+                  type="button"
+                  onClick={handleRetry}
+                  data-testid="retry-player"
+                >
+                  Retry
+                </button>
+                <button
+                  className="music-player__action"
+                  type="button"
+                  onClick={handleOpenInYouTube}
+                  disabled={!currentTrack}
+                  data-testid="open-youtube"
+                >
+                  Open in YouTube
+                </button>
+              </div>
             </div>
           </div>
-          <TrackList />
-          <VolumeControl />
         </>
       )}
 

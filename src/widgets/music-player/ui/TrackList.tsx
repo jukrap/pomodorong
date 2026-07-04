@@ -4,18 +4,20 @@ import { useMusicStackStore } from '../../../entities/music-stack/model/store';
 import { getMusicPlayer } from '../model/playerAdapter';
 import type { Track } from '../../../entities/track/model/types';
 import { formatTrackDuration } from '../../../entities/track/lib/formatTrackDuration';
+import { getTrackFallbackThumbnail } from '../../../entities/track/lib/getTrackFallbackThumbnail';
 
 export function TrackList() {
   const [isOpen, setIsOpen] = useState(false);
 
   const mode = useTimerStore(state => state.mode);
   const status = useTimerStore(state => state.status);
-  const getCurrentTracks = useMusicStackStore(state => state.getCurrentTracks);
+  const workTracks = useMusicStackStore(state => state.workTracks);
+  const breakTracks = useMusicStackStore(state => state.breakTracks);
   const currentTrackIndex = useMusicStackStore(
     state => state.currentTrackIndex
   );
 
-  const tracks = getCurrentTracks(mode);
+  const tracks = mode === 'work' ? workTracks : breakTracks;
 
   const handleTrackClick = (track: Track, index: number) => {
     const player = getMusicPlayer();
@@ -56,8 +58,10 @@ export function TrackList() {
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
-        <span>{isOpen ? '접기' : '재생목록'}</span>
-        <strong>{tracks.length}곡</strong>
+        <span>{isOpen ? 'Collapse' : 'Playlist'}</span>
+        <strong>
+          {tracks.length} {tracks.length === 1 ? 'track' : 'tracks'}
+        </strong>
       </button>
 
       {isOpen && (
@@ -78,6 +82,11 @@ export function TrackList() {
                 src={track.thumbnailUrl}
                 alt={track.title}
                 loading="lazy"
+                onError={event => {
+                  event.currentTarget.src = getTrackFallbackThumbnail(
+                    track.videoId
+                  );
+                }}
               />
 
               <span className="track-list__title">{track.title}</span>
@@ -87,7 +96,10 @@ export function TrackList() {
               </span>
 
               {index === currentTrackIndex && (
-                <span className="track-list__active-dot" aria-label="선택됨" />
+                <span
+                  className="track-list__active-dot"
+                  aria-label="Selected"
+                />
               )}
             </button>
           ))}

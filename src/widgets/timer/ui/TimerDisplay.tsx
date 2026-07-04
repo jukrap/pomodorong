@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import './TimerDisplay.css';
 
@@ -7,32 +8,47 @@ export function TimerDisplay() {
   const status = useTimerStore(state => state.status);
   const workDuration = useTimerStore(state => state.workDuration);
   const breakDuration = useTimerStore(state => state.breakDuration);
-  const displaySeconds =
-    status === 'idle' && currentTime === 0
-      ? (mode === 'work' ? workDuration : breakDuration) * 60
-      : currentTime;
 
-  const hours = Math.floor(displaySeconds / 3600);
-  const minutes = Math.floor((displaySeconds % 3600) / 60);
-  const seconds = displaySeconds % 60;
+  const hours = Math.floor(currentTime / 3600);
+  const minutes = Math.floor((currentTime % 3600) / 60);
+  const seconds = currentTime % 60;
 
   const formatTime = (num: number) => String(num).padStart(2, '0');
   const displayTime = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(
     seconds
   )}`;
+  const totalSeconds = (mode === 'work' ? workDuration : breakDuration) * 60;
+  const elapsedProgress =
+    totalSeconds > 0 && !(status === 'idle' && currentTime === 0)
+      ? Math.max(0, Math.min(1, 1 - currentTime / totalSeconds))
+      : 0;
+  const waveLevel = Math.max(12, Math.round(elapsedProgress * 100));
 
   return (
     <div className="timer-display">
       <div className={`timer-display__mode timer-display__mode--${mode}`}>
         <span className="timer-display__mode-dot" aria-hidden="true" />
-        <span>{mode === 'work' ? '작업 시간' : '휴식 시간'}</span>
+        <div className="timer-display__mode-copy">
+          <strong>{mode === 'work' ? 'Work' : 'Break'}</strong>
+          <span>{mode === 'work' ? workDuration : breakDuration}:00</span>
+        </div>
       </div>
 
       <div
-        className="timer-display__time"
-        aria-label={`남은 시간 ${displayTime}`}
+        className="timer-display__time-shell"
+        aria-label={`Remaining time ${displayTime}`}
+        style={
+          {
+            '--timer-wave-level': `${waveLevel}%`,
+          } as CSSProperties
+        }
       >
-        {displayTime}
+        <span className="timer-display__time" aria-hidden="true">
+          {displayTime}
+        </span>
+        <span className="timer-display__time-wave" aria-hidden="true">
+          {displayTime}
+        </span>
       </div>
     </div>
   );

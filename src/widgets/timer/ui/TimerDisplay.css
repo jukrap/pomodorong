@@ -2,68 +2,187 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 22px;
+  gap: 26px;
   max-width: 100%;
 }
 
 .timer-display__mode {
   display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 14px;
-  border: 1px solid rgba(29, 29, 31, 0.08);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
-  color: #515154;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  color: var(--accent, #ff493f);
 }
 
 .timer-display__mode-dot {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
+  margin-top: 7px;
   border-radius: 999px;
-  background: #ff3b30;
-  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12);
+  background: currentColor;
+  box-shadow: 0 0 0 5px var(--accent-soft, rgba(255, 73, 63, 0.12));
 }
 
-.timer-display__mode--break .timer-display__mode-dot {
-  background: #00a885;
-  box-shadow: 0 0 0 4px rgba(0, 168, 133, 0.12);
+.timer-display__mode--break {
+  color: #24a89a;
 }
 
-.timer-display__time {
-  max-width: 100%;
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-    monospace;
-  font-size: 108px;
+.timer-display__mode-copy {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.timer-display__mode-copy strong {
+  font-size: 23px;
   line-height: 1;
   font-weight: 700;
+}
+
+.timer-display__mode-copy span {
+  color: #6d7686;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.timer-display__time-shell {
+  position: relative;
+  max-width: 100%;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  --timer-wave-level: 12%;
+}
+
+.timer-display__time,
+.timer-display__time-wave {
+  grid-area: 1 / 1;
+  font-family:
+    Inter,
+    'SF Pro Display',
+    'SF Pro Text',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  font-size: 136px;
+  line-height: 0.95;
+  font-weight: 600;
   letter-spacing: 0;
-  color: #1d1d1f;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink, #07101f);
+  text-shadow: 0 8px 24px rgba(7, 16, 31, 0.1);
   white-space: nowrap;
+}
+
+.timer-display__time-wave {
+  color: transparent;
+  opacity: 0.56;
+  text-shadow: none;
+  background:
+    radial-gradient(
+      44px 18px at 22px calc(100% - var(--timer-wave-level)),
+      rgba(255, 73, 63, 0.68) 0 42%,
+      transparent 45%
+    ),
+    radial-gradient(
+      58px 22px at 86px calc(100% - var(--timer-wave-level) + 8px),
+      rgba(36, 168, 154, 0.48) 0 42%,
+      transparent 45%
+    ),
+    radial-gradient(
+      64px 26px at 142px calc(100% - var(--timer-wave-level) - 4px),
+      rgba(255, 73, 63, 0.42) 0 42%,
+      transparent 45%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(255, 73, 63, 0.5) 0,
+      rgba(36, 168, 154, 0.32) var(--timer-wave-level),
+      transparent var(--timer-wave-level)
+    );
+  background-size:
+    170px 100%,
+    210px 100%,
+    260px 100%,
+    100% 100%;
+  background-position:
+    0 0,
+    42px 0,
+    86px 0,
+    0 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  clip-path: inset(calc(100% - var(--timer-wave-level)) 0 0 0);
+  animation: timer-wave-flow 5.4s linear infinite;
+}
+
+@keyframes timer-wave-flow {
+  from {
+    background-position:
+      0 0,
+      42px 0,
+      86px 0,
+      0 0;
+  }
+
+  to {
+    background-position:
+      170px 0,
+      -168px 0,
+      346px 0,
+      0 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .timer-display__time,
+  .timer-display__time-wave {
+    font-size: 112px;
+  }
 }
 
 @media (max-width: 760px) {
   .timer-display {
-    gap: 18px;
+    gap: 20px;
   }
 
-  .timer-display__time {
+  .timer-display__time,
+  .timer-display__time-wave {
     font-size: 72px;
   }
 }
 
 @media (max-width: 520px) {
-  .timer-display__time {
-    font-size: 48px;
+  .timer-display__mode-copy strong {
+    font-size: 18px;
+  }
+
+  .timer-display__mode-copy span {
+    font-size: 14px;
+  }
+
+  .timer-display__time,
+  .timer-display__time-wave {
+    font-size: 52px;
   }
 }
 
 @media (max-width: 380px) {
-  .timer-display__time {
-    font-size: 42px;
+  .timer-display__time,
+  .timer-display__time-wave {
+    font-size: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-display__time-wave {
+    animation: none;
+    background-position:
+      24px 0,
+      60px 0,
+      110px 0,
+      0 0;
   }
 }

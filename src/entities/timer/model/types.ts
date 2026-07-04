@@ -25,25 +25,25 @@ export interface TimerSettings {
 export const DEFAULT_PRESETS: TimerPreset[] = [
   {
     id: 'classic',
-    name: '클래식',
+    name: 'Classic',
     workDuration: 25,
     breakDuration: 5,
   },
   {
     id: 'standard',
-    name: '스탠다드',
+    name: 'Standard',
     workDuration: 50,
     breakDuration: 10,
   },
   {
     id: 'deepwork',
-    name: '딥워크',
-    workDuration: 120,
-    breakDuration: 30,
+    name: 'Deep Work',
+    workDuration: 90,
+    breakDuration: 20,
   },
   {
     id: 'custom',
-    name: '커스텀',
+    name: 'Custom',
     workDuration: 90,
     breakDuration: 20,
   },

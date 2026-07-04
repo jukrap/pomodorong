@@ -136,7 +136,7 @@ export class YouTubeProvider {
     this.isDestroyed = false;
     this.onTrackEnd = options.onTrackEnd || null;
     this.onStatusChange = options.onStatusChange || null;
-    this.setStatus('loading', '연결 중');
+    this.setStatus('loading', 'Connecting to player...');
 
     try {
       const YT = await loadYouTubeIframeApi();
@@ -150,7 +150,7 @@ export class YouTubeProvider {
       });
     } catch (error) {
       const message =
-        '플레이어 연결에 실패했습니다. 다시 시도하거나 YouTube에서 열어 주세요.';
+        'Player connection failed. Retry or open the track in YouTube.';
       this.setStatus('error', message);
       throw error;
     }
@@ -185,7 +185,7 @@ export class YouTubeProvider {
 
       this.setStatus(
         'error',
-        '플레이어가 응답하지 않습니다. 다시 시도하거나 YouTube에서 열어 주세요.'
+        'The player is not responding. Retry or open the track in YouTube.'
       );
       completeOnce();
     }, 8000);
@@ -215,7 +215,7 @@ export class YouTubeProvider {
         onAutoplayBlocked: () => {
           this.setStatus(
             'autoplay-blocked',
-            '자동재생이 차단되었습니다. 시작 후 다시 재생해 주세요.'
+            'Autoplay was blocked. Press Start, then retry.'
           );
         },
       },
@@ -256,7 +256,7 @@ export class YouTubeProvider {
     }
 
     if (event.data === 3) {
-      this.setStatus('loading', '트랙을 불러오는 중입니다.');
+      this.setStatus('loading', 'Loading track...');
       this.scheduleTrackLoadFallback();
       return;
     }
@@ -270,16 +270,16 @@ export class YouTubeProvider {
   private getErrorMessage(errorCode: number) {
     switch (errorCode) {
       case 2:
-        return '잘못된 비디오 ID입니다.';
+        return 'Invalid video ID.';
       case 5:
-        return 'HTML5 플레이어 오류입니다.';
+        return 'HTML5 player error.';
       case 100:
-        return '비디오를 찾을 수 없습니다.';
+        return 'Video not found.';
       case 101:
       case 150:
-        return '임베드 재생이 차단된 트랙입니다. 다음 트랙으로 넘어갑니다.';
+        return 'Embedding is blocked for this track. Skipping to the next track.';
       default:
-        return `알 수 없는 YouTube 오류입니다. 코드: ${errorCode}`;
+        return `Unknown YouTube error. Code: ${errorCode}`;
     }
   }
 
@@ -297,7 +297,7 @@ export class YouTubeProvider {
 
       this.setStatus(
         'autoplay-blocked',
-        '재생이 시작되지 않았습니다. 시작 후 다시 시도하거나 YouTube에서 열어 주세요.'
+        'Playback did not start. Press Start, then retry or open in YouTube.'
       );
     }, 7000);
   }
@@ -313,7 +313,7 @@ export class YouTubeProvider {
 
   play(videoId: string) {
     if (this.isReady && this.player) {
-      this.setStatus('loading', '트랙 연결 중');
+      this.setStatus('loading', 'Loading track...');
       this.player.loadVideoById(videoId);
       this.scheduleTrackLoadFallback();
     }

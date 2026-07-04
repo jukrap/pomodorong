@@ -52,7 +52,7 @@ export function PlaybackControls() {
         disabled={tracks.length <= 1}
         data-testid="next-track"
       >
-        다음
+        Next
       </button>
     </div>
   );

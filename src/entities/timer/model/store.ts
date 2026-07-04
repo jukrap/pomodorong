@@ -10,8 +10,8 @@ import {
 const TIMER_SETTINGS_STORAGE_KEY = 'timer-settings';
 
 export const DEFAULT_TIMER: Timer = {
-  workDuration: 120,
-  breakDuration: 30,
+  workDuration: 90,
+  breakDuration: 20,
   currentTime: 0,
   mode: 'work',
   status: 'idle',
@@ -42,9 +42,18 @@ function loadSelectedPreset(): TimerPreset {
     DEFAULT_TIMER_SETTINGS
   );
 
-  return isTimerPreset(settings.currentPreset)
-    ? settings.currentPreset
-    : DEFAULT_TIMER_SETTINGS.currentPreset;
+  if (!isTimerPreset(settings.currentPreset)) {
+    return DEFAULT_TIMER_SETTINGS.currentPreset;
+  }
+
+  if (settings.currentPreset.id === 'custom') {
+    return settings.currentPreset;
+  }
+
+  return (
+    DEFAULT_PRESETS.find(preset => preset.id === settings.currentPreset?.id) ??
+    DEFAULT_TIMER_SETTINGS.currentPreset
+  );
 }
 
 function saveSelectedPreset(preset: TimerPreset) {

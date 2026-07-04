@@ -6,6 +6,8 @@ export interface PomodorongStorageV1 {
   'playback-state:work': unknown;
   'playback-state:break': unknown;
   'music-volume': unknown;
+  'tracks:work': unknown;
+  'tracks:break': unknown;
 }
 
 interface StoredEnvelope<T> {

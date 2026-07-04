@@ -4,6 +4,7 @@ import {
   DEFAULT_WORK_TRACKS,
   DEFAULT_BREAK_TRACKS,
 } from '../../track/model/types';
+import type { TimerMode } from '../../timer/model/types';
 import type { MediaPlaybackStatus, PlaybackState } from './types';
 import {
   readStorageValue,
@@ -25,20 +26,63 @@ interface MusicStackState {
   workPlaybackState: PlaybackState;
   breakPlaybackState: PlaybackState;
 
-  getCurrentTracks: (mode: 'work' | 'break') => Track[];
-  getCurrentTrack: (mode: 'work' | 'break') => Track | null;
-  nextTrack: (mode: 'work' | 'break') => Track | null;
+  getCurrentTracks: (mode: TimerMode) => Track[];
+  getCurrentTrack: (mode: TimerMode) => Track | null;
+  addTrack: (
+    mode: TimerMode,
+    track: Track
+  ) => { ok: true } | { ok: false; message: string };
+  removeTrack: (
+    mode: TimerMode,
+    videoId: string,
+    syncCurrentIndex?: boolean
+  ) => void;
+  resetTracks: (mode: TimerMode, syncCurrentIndex?: boolean) => void;
+  nextTrack: (mode: TimerMode) => Track | null;
   resetTrackIndex: () => void;
 
-  savePlaybackState: (mode: 'work' | 'break', state: PlaybackState) => void;
-  getPlaybackState: (mode: 'work' | 'break') => PlaybackState;
+  savePlaybackState: (mode: TimerMode, state: PlaybackState) => void;
+  getPlaybackState: (mode: TimerMode) => PlaybackState;
   setPlaybackStatus: (
     status: MediaPlaybackStatus,
     message?: string | null
   ) => void;
 }
 
-function loadPlaybackState(mode: 'work' | 'break'): PlaybackState {
+function isTrack(value: unknown): value is Track {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const track = value as Partial<Track>;
+  return (
+    typeof track.videoId === 'string' &&
+    typeof track.title === 'string' &&
+    typeof track.thumbnailUrl === 'string' &&
+    (typeof track.durationSeconds === 'undefined' ||
+      typeof track.durationSeconds === 'number')
+  );
+}
+
+function loadTracks(mode: TimerMode, fallback: Track[]): Track[] {
+  const savedTracks = readStorageValue<unknown>(`tracks:${mode}`, fallback);
+
+  if (!Array.isArray(savedTracks) || !savedTracks.every(isTrack)) {
+    return fallback;
+  }
+
+  return savedTracks;
+}
+
+function saveTracks(mode: TimerMode, tracks: Track[]) {
+  writeStorageValue(`tracks:${mode}`, tracks);
+}
+
+function getDefaultTracks(mode: TimerMode) {
+  return mode === 'work' ? DEFAULT_WORK_TRACKS : DEFAULT_BREAK_TRACKS;
+}
+
+function loadPlaybackState(mode: TimerMode): PlaybackState {
   const state = readStorageValue<Partial<PlaybackState>>(
     `playback-state:${mode}`,
     DEFAULT_PLAYBACK_STATE
@@ -57,16 +101,13 @@ function loadPlaybackState(mode: 'work' | 'break'): PlaybackState {
   };
 }
 
-function savePlaybackStateToLocal(
-  mode: 'work' | 'break',
-  state: PlaybackState
-) {
+function savePlaybackStateToLocal(mode: TimerMode, state: PlaybackState) {
   writeStorageValue(`playback-state:${mode}`, state);
 }
 
 export const useMusicStackStore = create<MusicStackState>((set, get) => ({
-  workTracks: DEFAULT_WORK_TRACKS,
-  breakTracks: DEFAULT_BREAK_TRACKS,
+  workTracks: loadTracks('work', DEFAULT_WORK_TRACKS),
+  breakTracks: loadTracks('break', DEFAULT_BREAK_TRACKS),
   currentTrackIndex: 0,
   playbackStatus: 'idle',
   playbackMessage: null,
@@ -82,6 +123,85 @@ export const useMusicStackStore = create<MusicStackState>((set, get) => ({
     const tracks = get().getCurrentTracks(mode);
     const index = get().currentTrackIndex;
     return tracks[index] || null;
+  },
+
+  addTrack: (mode, track) => {
+    const tracks = get().getCurrentTracks(mode);
+    const normalizedTrack = {
+      ...track,
+      title: track.title.trim() || `YouTube video ${track.videoId}`,
+      thumbnailUrl:
+        track.thumbnailUrl ||
+        `https://i.ytimg.com/vi/${track.videoId}/hqdefault.jpg`,
+    };
+
+    if (
+      tracks.some(
+        existingTrack => existingTrack.videoId === normalizedTrack.videoId
+      )
+    ) {
+      return {
+        ok: false,
+        message: 'This video is already in the selected stack.',
+      };
+    }
+
+    const nextTracks = [...tracks, normalizedTrack];
+    saveTracks(mode, nextTracks);
+
+    set(
+      mode === 'work' ? { workTracks: nextTracks } : { breakTracks: nextTracks }
+    );
+
+    return { ok: true };
+  },
+
+  removeTrack: (mode, videoId, syncCurrentIndex = true) => {
+    const tracks = get().getCurrentTracks(mode);
+    const nextTracks = tracks.filter(track => track.videoId !== videoId);
+    const savedTrackIndex = get().getPlaybackState(mode).trackIndex;
+    const nextIndex =
+      nextTracks.length === 0
+        ? 0
+        : Math.min(savedTrackIndex, nextTracks.length - 1);
+
+    saveTracks(mode, nextTracks);
+
+    set(
+      mode === 'work'
+        ? {
+            workTracks: nextTracks,
+            ...(syncCurrentIndex ? { currentTrackIndex: nextIndex } : {}),
+          }
+        : {
+            breakTracks: nextTracks,
+            ...(syncCurrentIndex ? { currentTrackIndex: nextIndex } : {}),
+          }
+    );
+
+    get().savePlaybackState(mode, {
+      trackIndex: nextIndex,
+      currentTime: 0,
+    });
+  },
+
+  resetTracks: (mode, syncCurrentIndex = true) => {
+    const defaultTracks = getDefaultTracks(mode);
+    saveTracks(mode, defaultTracks);
+
+    set(
+      mode === 'work'
+        ? {
+            workTracks: defaultTracks,
+            ...(syncCurrentIndex ? { currentTrackIndex: 0 } : {}),
+          }
+        : {
+            breakTracks: defaultTracks,
+            ...(syncCurrentIndex ? { currentTrackIndex: 0 } : {}),
+          }
+    );
+
+    get().savePlaybackState(mode, DEFAULT_PLAYBACK_STATE);
   },
 
   nextTrack: mode => {

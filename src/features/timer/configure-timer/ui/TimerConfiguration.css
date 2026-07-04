@@ -1,59 +1,86 @@
 .preset-buttons {
-  max-width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  padding: 6px;
-  border: 1px solid rgba(29, 29, 31, 0.08);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow: 0 1px 2px rgba(29, 29, 31, 0.04);
+  width: min(520px, 100%);
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  padding: 4px;
+  border: 1px solid var(--surface-border, rgba(7, 16, 31, 0.08));
+  border-radius: 15px;
+  background: var(--surface-raised, rgba(255, 255, 255, 0.86));
+  box-shadow: var(--surface-shadow-soft, 0 10px 28px rgba(7, 16, 31, 0.04));
 }
 
 .preset-buttons__button {
-  min-height: 42px;
-  display: inline-grid;
-  grid-auto-flow: column;
-  align-items: center;
-  gap: 8px;
-  border: 0;
-  border-radius: 999px;
-  padding: 0 16px;
+  position: relative;
+  min-width: 0;
+  min-height: 54px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0 12px;
   background: transparent;
-  color: #515154;
+  color: var(--ink, #07101f);
   cursor: pointer;
   transition:
     background-color 180ms ease,
+    border-color 180ms ease,
     color 180ms ease,
     box-shadow 180ms ease;
 }
 
+.preset-buttons__button + .preset-buttons__button::before {
+  position: absolute;
+  left: -4px;
+  top: 13px;
+  bottom: 13px;
+  width: 1px;
+  background: var(--line, rgba(7, 16, 31, 0.1));
+  content: '';
+}
+
 .preset-buttons__button span {
+  overflow: hidden;
+  max-width: 100%;
   font-size: 14px;
   font-weight: 700;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .preset-buttons__button small {
-  color: #86868b;
-  font-size: 12px;
-  font-weight: 700;
+  color: #6d7686;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
 }
 
 .preset-buttons__button--active {
-  background: #1d1d1f;
-  color: #ffffff;
-  box-shadow: 0 10px 22px rgba(29, 29, 31, 0.12);
+  border-color: var(--accent, #ff493f);
+  background: rgba(255, 255, 255, 0.64);
+  color: var(--accent, #ff493f);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 8px 18px rgba(255, 73, 63, 0.08);
+}
+
+.preset-buttons__button--active::before,
+.preset-buttons__button--active + .preset-buttons__button::before {
+  opacity: 0;
 }
 
 .preset-buttons__button--active small {
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--accent, #ff493f);
 }
 
 .preset-buttons__button:focus-visible,
 .custom-timer-form button:focus-visible,
 .custom-timer-form input:focus-visible {
-  outline: 3px solid rgba(0, 122, 255, 0.28);
+  outline: 3px solid rgba(255, 73, 63, 0.24);
   outline-offset: 3px;
 }
 
@@ -62,28 +89,29 @@
   display: grid;
   gap: 16px;
   padding: 18px;
-  border: 1px solid rgba(29, 29, 31, 0.08);
+  border: 1px solid var(--surface-border, rgba(7, 16, 31, 0.08));
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--surface-raised, rgba(255, 255, 255, 0.86));
+  box-shadow: var(--surface-shadow-soft, 0 10px 28px rgba(7, 16, 31, 0.06));
 }
 
 .custom-timer-form label {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px 16px;
-  color: #515154;
+  color: #6d7686;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .custom-timer-form strong {
-  color: #1d1d1f;
+  color: var(--ink, #07101f);
 }
 
 .custom-timer-form input {
   grid-column: 1 / -1;
   width: 100%;
-  accent-color: #1d1d1f;
+  accent-color: var(--accent, #ff493f);
 }
 
 .custom-timer-form button {
@@ -92,7 +120,7 @@
   border: 0;
   border-radius: 999px;
   padding: 0 18px;
-  background: #1d1d1f;
+  background: var(--accent, #ff493f);
   color: #ffffff;
   font-size: 14px;
   font-weight: 700;
@@ -102,11 +130,12 @@
 @media (max-width: 560px) {
   .preset-buttons {
     width: 100%;
-    border-radius: 20px;
+    min-height: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 18px;
   }
 
-  .preset-buttons__button {
-    flex: 1 1 128px;
-    justify-content: center;
+  .preset-buttons__button + .preset-buttons__button::before {
+    display: none;
   }
 }

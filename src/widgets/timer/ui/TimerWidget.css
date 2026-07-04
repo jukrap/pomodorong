@@ -13,15 +13,27 @@
 }
 
 .timer-widget__stage {
-  gap: 34px;
+  gap: 28px;
+}
+
+.timer-widget__caption {
+  margin-top: 2px;
+  color: #6d7686;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 @media (max-width: 760px) {
   .timer-widget {
-    gap: 30px;
+    gap: 34px;
   }
 
   .timer-widget__stage {
-    gap: 26px;
+    gap: 24px;
+  }
+
+  .timer-widget__caption {
+    text-align: center;
+    font-size: 13px;
   }
 }

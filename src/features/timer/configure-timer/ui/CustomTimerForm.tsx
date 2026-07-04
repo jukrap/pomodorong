@@ -18,7 +18,7 @@ export function CustomTimerForm() {
   const handleApply = () => {
     setPreset({
       id: 'custom',
-      name: '커스텀',
+      name: 'Custom',
       workDuration,
       breakDuration,
     });
@@ -27,8 +27,8 @@ export function CustomTimerForm() {
   return (
     <div className="custom-timer-form">
       <label>
-        <span>작업 시간</span>
-        <strong>{workDuration}분</strong>
+        <span>Work duration</span>
+        <strong>{workDuration}m</strong>
         <input
           type="range"
           min="1"
@@ -39,8 +39,8 @@ export function CustomTimerForm() {
       </label>
 
       <label>
-        <span>휴식 시간</span>
-        <strong>{breakDuration}분</strong>
+        <span>Break duration</span>
+        <strong>{breakDuration}m</strong>
         <input
           type="range"
           min="1"
@@ -51,7 +51,7 @@ export function CustomTimerForm() {
       </label>
 
       <button type="button" onClick={handleApply}>
-        적용
+        Apply
       </button>
     </div>
   );

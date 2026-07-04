@@ -1,11 +1,5 @@
 import { useTimerStore } from '../../../entities/timer/model/store';
 
-/**
- * SessionCounter: 완료한 세션 수 표시
- * 
- * 세션 = 작업 시간 1번 완료
- * 예: 2시간 작업 → 휴식 → 세션 +1
- */
 export function SessionCounter() {
   const sessionCount = useTimerStore(state => state.sessionCount);
 
@@ -23,8 +17,8 @@ export function SessionCounter() {
         color: '#4a5568',
       }}
     >
-      <span>🔥</span>
-      <span>완료한 세션: {sessionCount}</span>
+      <span aria-hidden="true">●</span>
+      <span>Completed sessions: {sessionCount}</span>
     </div>
   );
 }

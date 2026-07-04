@@ -8,14 +8,15 @@ export function TimerControls() {
   const reset = useTimerStore(state => state.reset);
 
   return (
-    <div className="timer-controls" aria-label="타이머 제어">
+    <div className="timer-controls" aria-label="Timer controls">
       {status === 'running' ? (
         <button
           className="timer-controls__button timer-controls__button--primary"
           type="button"
           onClick={pause}
         >
-          일시정지
+          <span aria-hidden="true">Ⅱ</span>
+          Pause
         </button>
       ) : (
         <button
@@ -23,7 +24,8 @@ export function TimerControls() {
           type="button"
           onClick={start}
         >
-          시작
+          <span aria-hidden="true">▶</span>
+          Start
         </button>
       )}
 
@@ -32,7 +34,8 @@ export function TimerControls() {
         type="button"
         onClick={reset}
       >
-        리셋
+        <span aria-hidden="true">↻</span>
+        Reset
       </button>
     </div>
   );

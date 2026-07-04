@@ -3,7 +3,7 @@ import './SessionStatsPanel.css';
 
 function formatFocusTime(totalFocusSeconds: number) {
   if (totalFocusSeconds <= 0) {
-    return '0분';
+    return '0m';
   }
 
   const totalMinutes = Math.floor(totalFocusSeconds / 60);
@@ -11,22 +11,22 @@ function formatFocusTime(totalFocusSeconds: number) {
   const minutes = totalMinutes % 60;
 
   if (hours === 0) {
-    return `${minutes}분`;
+    return `${minutes}m`;
   }
 
   if (minutes === 0) {
-    return `${hours}시간`;
+    return `${hours}h`;
   }
 
-  return `${hours}시간 ${minutes}분`;
+  return `${hours}h ${minutes}m`;
 }
 
 function formatLastCompletedAt(lastCompletedAt: string | null) {
   if (!lastCompletedAt) {
-    return '아직 기록 없음';
+    return 'No sessions yet';
   }
 
-  return new Intl.DateTimeFormat('ko-KR', {
+  return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -46,22 +46,54 @@ export function SessionStatsPanel() {
   return (
     <section className="session-stats" aria-labelledby="session-stats-title">
       <div className="session-stats__header">
-        <h2 id="session-stats-title">로컬 기록</h2>
-        <span>이 기기에 저장</span>
+        <h2 id="session-stats-title">Local stats</h2>
+        <span>Saved on this device</span>
       </div>
 
       <dl className="session-stats__grid">
         <div>
-          <dt>완료 세션</dt>
-          <dd>{completedSessions}</dd>
+          <span className="session-stats__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <rect x="4" y="5" width="16" height="15" rx="3" />
+              <path d="M8 3v4M16 3v4M4 10h16" />
+            </svg>
+          </span>
+          <div className="session-stats__copy">
+            <dt>Sessions</dt>
+            <dd>{completedSessions}</dd>
+            <small>Completed</small>
+          </div>
         </div>
         <div>
-          <dt>누적 집중</dt>
-          <dd>{formatFocusTime(totalFocusSeconds)}</dd>
+          <span
+            className="session-stats__icon session-stats__icon--focus"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24" focusable="false">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 7v6l4 2" />
+            </svg>
+          </span>
+          <div className="session-stats__copy">
+            <dt>Focus Time</dt>
+            <dd>{formatFocusTime(totalFocusSeconds)}</dd>
+            <small>Total</small>
+          </div>
         </div>
         <div className="session-stats__wide">
-          <dt>마지막 완료</dt>
-          <dd>{formatLastCompletedAt(lastCompletedAt)}</dd>
+          <span
+            className="session-stats__icon session-stats__icon--line"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M4 16l5-5 4 4 7-8" />
+            </svg>
+          </span>
+          <div className="session-stats__copy">
+            <dt>Last Session</dt>
+            <dd>{formatLastCompletedAt(lastCompletedAt)}</dd>
+            <small>Local device</small>
+          </div>
         </div>
       </dl>
     </section>
