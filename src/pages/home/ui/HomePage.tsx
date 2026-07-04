@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTimerStore } from '../../../entities/timer/model/store';
+import { useMusicStackStore } from '../../../entities/music-stack/model/store';
 import { MusicPlayer } from '../../../widgets/music-player/ui/MusicPlayer';
 import { MediaSettingsModal } from '../../../widgets/music-player/ui/MediaSettingsModal';
 import { SessionStatsPanel } from '../../../widgets/session-stats/ui/SessionStatsPanel';
@@ -16,7 +17,10 @@ import './HomePage.css';
 export function HomePage() {
   const mode = useTimerStore(state => state.mode);
   const status = useTimerStore(state => state.status);
+  const playbackStatus = useMusicStackStore(state => state.playbackStatus);
+  const playbackMessage = useMusicStackStore(state => state.playbackMessage);
   const toastTimeoutRef = useRef<number | null>(null);
+  const lastPlaybackToastRef = useRef<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
@@ -44,6 +48,38 @@ export function HomePage() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const shouldNotify =
+      playbackStatus === 'autoplay-blocked' ||
+      playbackStatus === 'error' ||
+      playbackStatus === 'unavailable';
+
+    if (!shouldNotify) {
+      lastPlaybackToastRef.current = null;
+      return;
+    }
+
+    const message =
+      playbackMessage ??
+      (playbackStatus === 'autoplay-blocked'
+        ? 'Autoplay was blocked. Press Start, then Retry.'
+        : playbackStatus === 'unavailable'
+          ? 'This video is unavailable. Try the next one.'
+          : 'YouTube player connection failed. Try Retry.');
+    const toastKey = `${playbackStatus}:${message}`;
+
+    if (lastPlaybackToastRef.current === toastKey) {
+      return;
+    }
+
+    lastPlaybackToastRef.current = toastKey;
+    const timeout = window.setTimeout(() => {
+      showToast(message, playbackStatus === 'unavailable' ? 'info' : 'error');
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [playbackMessage, playbackStatus, showToast]);
 
   return (
     <div className={`home-page home-page--${mode}`}>
@@ -95,6 +131,24 @@ export function HomePage() {
 
         <SessionStatsPanel />
       </main>
+
+      <footer className="home-page__footer" aria-label="Storage and project links">
+        <span>All data is saved on this device only.</span>
+        <a
+          href="https://github.com/jukrap/pomodorong#readme"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Learn more
+        </a>
+        <a
+          href="https://github.com/jukrap/pomodorong"
+          target="_blank"
+          rel="noreferrer"
+        >
+          GitHub
+        </a>
+      </footer>
 
       <AnimatePresence>
         {isSettingsOpen && (

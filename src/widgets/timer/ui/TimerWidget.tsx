@@ -2,10 +2,7 @@ import { useEffect } from 'react';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { TimerDisplay } from './TimerDisplay';
 import { TimerControls } from './TimerControls';
-import {
-  PresetButtons,
-  CustomTimerForm,
-} from '../../../features/timer/configure-timer';
+import { PresetButtons } from '../../../features/timer/configure-timer';
 import './TimerWidget.css';
 
 export function TimerWidget() {
@@ -34,7 +31,6 @@ export function TimerWidget() {
           Focus on what matters. One session at a time.
         </p>
       </div>
-      <CustomTimerForm />
     </div>
   );
 }

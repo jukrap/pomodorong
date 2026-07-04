@@ -1,6 +1,6 @@
 .preset-buttons {
-  width: min(520px, 100%);
-  min-height: 64px;
+  width: min(540px, 100%);
+  height: 64px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: stretch;
@@ -14,11 +14,12 @@
 .preset-buttons__button {
   position: relative;
   min-width: 0;
-  min-height: 54px;
+  min-height: 0;
   display: grid;
   justify-items: center;
   align-content: center;
   gap: 6px;
+  overflow: hidden;
   border: 1px solid transparent;
   border-radius: 12px;
   padding: 0 12px;
@@ -45,8 +46,8 @@
 .preset-buttons__button span {
   overflow: hidden;
   max-width: 100%;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 720;
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -54,8 +55,8 @@
 
 .preset-buttons__button small {
   color: #6d7686;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 620;
   line-height: 1;
 }
 
@@ -78,24 +79,90 @@
 }
 
 .preset-buttons__button:focus-visible,
-.custom-timer-form button:focus-visible,
-.custom-timer-form input:focus-visible {
+.custom-timer__close:focus-visible,
+.custom-timer__footer button:focus-visible,
+.custom-timer__control input:focus-visible {
   outline: 3px solid rgba(255, 73, 63, 0.24);
   outline-offset: 3px;
 }
 
-.custom-timer-form {
-  width: min(480px, 100%);
+.custom-timer {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
   display: grid;
-  gap: 16px;
-  padding: 18px;
-  border: 1px solid var(--surface-border, rgba(7, 16, 31, 0.08));
-  border-radius: 18px;
-  background: var(--surface-raised, rgba(255, 255, 255, 0.86));
-  box-shadow: var(--surface-shadow-soft, 0 10px 28px rgba(7, 16, 31, 0.06));
+  place-items: center;
+  padding: 24px;
+  background: rgba(247, 249, 252, 0.5);
+  backdrop-filter: blur(18px);
 }
 
-.custom-timer-form label {
+.custom-timer__dialog {
+  width: min(520px, 100%);
+  display: grid;
+  gap: 22px;
+  padding: 26px;
+  border: 1px solid var(--surface-border, rgba(7, 16, 31, 0.08));
+  border-radius: 26px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(248, 250, 253, 0.88)
+    ),
+    var(--surface-raised, rgba(255, 255, 255, 0.86));
+  box-shadow: var(--surface-shadow, 0 22px 70px rgba(7, 16, 31, 0.1));
+}
+
+.custom-timer__header,
+.custom-timer__footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.custom-timer__header p,
+.custom-timer__control span {
+  color: var(--accent, #ff493f);
+  font-size: 12px;
+  font-weight: 740;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.custom-timer__header h2 {
+  margin-top: 6px;
+  color: var(--ink, #07101f);
+  font-size: 28px;
+  line-height: 1.08;
+  font-weight: 700;
+}
+
+.custom-timer__close {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(7, 16, 31, 0.08);
+  border-radius: 999px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(246, 248, 252, 0.7)),
+    rgba(255, 255, 255, 0.8);
+  color: var(--ink, #07101f);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow:
+    -5px -5px 12px rgba(255, 255, 255, 0.84),
+    6px 8px 18px rgba(23, 34, 51, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.custom-timer__body {
+  display: grid;
+  gap: 16px;
+}
+
+.custom-timer__control {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px 16px;
@@ -104,18 +171,26 @@
   font-weight: 600;
 }
 
-.custom-timer-form strong {
+.custom-timer__control strong {
   color: var(--ink, #07101f);
+  font-size: 18px;
+  font-weight: 700;
 }
 
-.custom-timer-form input {
+.custom-timer__control input {
   grid-column: 1 / -1;
   width: 100%;
   accent-color: var(--accent, #ff493f);
 }
 
-.custom-timer-form button {
-  justify-self: end;
+.custom-timer__footer {
+  align-items: center;
+  color: #6d7686;
+  font-size: 13px;
+  font-weight: 620;
+}
+
+.custom-timer__footer button {
   min-height: 42px;
   border: 0;
   border-radius: 999px;
@@ -130,12 +205,27 @@
 @media (max-width: 560px) {
   .preset-buttons {
     width: 100%;
-    min-height: auto;
+    height: 118px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     border-radius: 18px;
   }
 
   .preset-buttons__button + .preset-buttons__button::before {
     display: none;
+  }
+
+  .custom-timer {
+    place-items: end center;
+    padding: 12px 10px 0;
+  }
+
+  .custom-timer__dialog {
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px;
+  }
+
+  .custom-timer__header h2 {
+    font-size: 25px;
   }
 }

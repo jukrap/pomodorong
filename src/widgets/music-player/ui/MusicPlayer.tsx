@@ -32,22 +32,13 @@ export function MusicPlayer() {
     state => state.savePlaybackState
   );
   const playbackStatus = useMusicStackStore(state => state.playbackStatus);
-  const playbackMessage = useMusicStackStore(state => state.playbackMessage);
   const setPlaybackStatus = useMusicStackStore(
     state => state.setPlaybackStatus
   );
 
   const tracks = mode === 'work' ? workTracks : breakTracks;
   const currentTrack = tracks[currentTrackIndex] ?? null;
-  const hasActionableIssue =
-    playbackStatus === 'error' ||
-    playbackStatus === 'unavailable' ||
-    playbackStatus === 'autoplay-blocked';
   const statusMessage = useMemo(() => {
-    if (playbackMessage) {
-      return playbackMessage;
-    }
-
     switch (playbackStatus) {
       case 'loading':
         return 'Connecting to player...';
@@ -64,7 +55,7 @@ export function MusicPlayer() {
       default:
         return 'Ready';
     }
-  }, [playbackMessage, playbackStatus, tracks.length]);
+  }, [playbackStatus, tracks.length]);
 
   useEffect(() => {
     let isDisposed = false;
@@ -267,15 +258,6 @@ export function MusicPlayer() {
       <div className="music-player__header">
         <h2 id="music-player-title">NOW PLAYING</h2>
       </div>
-
-      {hasActionableIssue && (
-        <p
-          className={`music-player__status music-player__status--${playbackStatus}`}
-          role="status"
-        >
-          {statusMessage}
-        </p>
-      )}
 
       {tracks.length === 0 ? (
         <div className="music-player__empty">

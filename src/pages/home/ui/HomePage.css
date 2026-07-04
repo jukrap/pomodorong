@@ -45,16 +45,16 @@
   color: var(--ink);
   font-size: 28px;
   line-height: 1;
-  font-weight: 700;
+  font-weight: 680;
   letter-spacing: 0;
 }
 
 .home-page__brand h1 span {
-  font-weight: 520;
+  font-weight: 470;
 }
 
 .home-page__brand h1 strong {
-  font-weight: 700;
+  font-weight: 720;
 }
 
 .home-page__utility {
@@ -136,6 +136,51 @@
   width: 100%;
 }
 
+.home-page__footer {
+  position: relative;
+  z-index: 1;
+  width: min(1030px, 100%);
+  margin: 28px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  color: #87909e;
+  font-size: 12px;
+  font-weight: 560;
+  line-height: 1.4;
+}
+
+.home-page__footer a {
+  position: relative;
+  color: #7c8594;
+  text-decoration: none;
+  transition:
+    color 170ms ease,
+    opacity 170ms ease;
+}
+
+.home-page__footer a:hover {
+  color: var(--ink);
+}
+
+.home-page__footer a:focus-visible {
+  border-radius: 6px;
+  outline: 3px solid rgba(255, 73, 63, 0.18);
+  outline-offset: 4px;
+}
+
+.home-page__footer a::before {
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 1px;
+  height: 14px;
+  background: rgba(7, 16, 31, 0.18);
+  transform: translateY(-50%);
+  content: '';
+}
+
 @media (max-width: 760px) {
   .home-page {
     padding: 24px 16px 34px;
@@ -148,6 +193,12 @@
 
   .home-page__timer-stage {
     min-height: 420px;
+  }
+
+  .home-page__footer {
+    flex-wrap: wrap;
+    margin-top: 24px;
+    gap: 9px 18px;
   }
 }
 

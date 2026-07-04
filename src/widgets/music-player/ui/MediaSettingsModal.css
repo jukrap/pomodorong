@@ -11,8 +11,8 @@
 
 .media-settings__dialog {
   width: min(1060px, 100%);
-  max-height: min(850px, calc(100vh - 56px));
-  min-height: min(700px, calc(100vh - 56px));
+  height: min(760px, calc(100vh - 56px));
+  max-height: calc(100vh - 56px);
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
   gap: 22px;
@@ -264,6 +264,7 @@
 
 .media-settings__add-panel {
   padding: 20px;
+  overflow: hidden;
 }
 
 .media-settings__section-heading {
@@ -538,8 +539,8 @@
 
   .media-settings__dialog {
     width: 100%;
+    height: calc(100vh - 12px);
     max-height: calc(100vh - 12px);
-    min-height: calc(100vh - 12px);
     border-radius: 26px 26px 0 0;
     gap: 18px;
   }
@@ -564,6 +565,7 @@
 
   .media-settings__workspace {
     padding-bottom: 22px;
+    overflow: auto;
   }
 
   .media-settings__playlist,

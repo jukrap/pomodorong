@@ -1,3 +1,5 @@
+@import '@fontsource-variable/geist/index.css';
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +8,7 @@
 
 body {
   font-family:
-    Inter,
+    'Geist Variable',
     'SF Pro Display',
     'SF Pro Text',
     -apple-system,

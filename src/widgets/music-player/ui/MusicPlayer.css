@@ -83,7 +83,6 @@
   color: var(--accent, #ff493f);
 }
 
-.music-player__status,
 .music-player__empty {
   margin-bottom: 14px;
   border: 1px solid rgba(255, 73, 63, 0.18);
@@ -93,12 +92,6 @@
   padding: 12px 14px;
   font-size: 14px;
   line-height: 1.45;
-}
-
-.music-player__status--autoplay-blocked {
-  border-color: rgba(180, 121, 0, 0.16);
-  background: #fffaf0;
-  color: #7a4f00;
 }
 
 .music-player__empty {
