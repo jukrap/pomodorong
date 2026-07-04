@@ -1,0 +1,27 @@
+.timer-widget {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 42px;
+}
+
+.timer-widget__presets,
+.timer-widget__stage {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+}
+
+.timer-widget__stage {
+  gap: 34px;
+}
+
+@media (max-width: 760px) {
+  .timer-widget {
+    gap: 30px;
+  }
+
+  .timer-widget__stage {
+    gap: 26px;
+  }
+}

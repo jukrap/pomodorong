@@ -4,78 +4,48 @@ import { formatTrackDuration } from '../../../entities/track/lib/formatTrackDura
 
 export function CurrentTrack() {
   const mode = useTimerStore(state => state.mode);
-  const getCurrentTrack = useMusicStackStore(state => state.getCurrentTrack);
+  const getCurrentTracks = useMusicStackStore(state => state.getCurrentTracks);
+  const currentTrackIndex = useMusicStackStore(
+    state => state.currentTrackIndex
+  );
+  const playbackStatus = useMusicStackStore(state => state.playbackStatus);
 
-  const currentTrack = getCurrentTrack(mode);
+  const tracks = getCurrentTracks(mode);
+  const currentTrack = tracks[currentTrackIndex] ?? null;
 
   if (!currentTrack) {
     return null;
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        padding: '16px',
-        background: 'rgba(255, 255, 255, 0.6)',
-        borderRadius: '12px',
-        maxWidth: '500px',
-        width: '100%',
-      }}
-    >
-      {/* 썸네일 */}
+    <div className="current-track">
       <img
+        className="current-track__thumb"
         src={currentTrack.thumbnailUrl}
         alt={currentTrack.title}
-        style={{
-          width: '80px',
-          height: '60px',
-          objectFit: 'cover',
-          borderRadius: '8px',
-        }}
+        loading="lazy"
       />
 
-      {/* 트랙 정보 */}
-      <div
-        style={{
-          flex: 1,
-          minWidth: 0,
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '14px',
-            fontWeight: '600',
-            color: '#2d2d2d',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
+      <div className="current-track__body">
+        <span className="current-track__eyebrow">
+          {mode === 'work' ? 'Focus stack' : 'Break stack'} ·{' '}
+          {currentTrackIndex + 1}/{tracks.length}
+        </span>
+        <strong
+          className="current-track__title"
+          data-testid="current-track-title"
         >
           {currentTrack.title}
-        </div>
-        <div
-          style={{
-            marginTop: '4px',
-            fontSize: '12px',
-            color: '#6c757d',
-          }}
-        >
+        </strong>
+        <span className="current-track__duration">
           {formatTrackDuration(currentTrack.durationSeconds)}
-        </div>
+        </span>
       </div>
 
-      {/* 재생 중 표시 */}
-      <div
-        style={{
-          fontSize: '24px',
-        }}
-      >
-        🎵
-      </div>
+      <span
+        className={`current-track__state current-track__state--${playbackStatus}`}
+        aria-hidden="true"
+      />
     </div>
   );
 }

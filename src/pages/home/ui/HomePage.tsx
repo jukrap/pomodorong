@@ -28,14 +28,18 @@ export function HomePage() {
       </header>
 
       <main className="home-page__workspace">
-        <section className="home-page__timer" aria-label="뽀모도로 타이머">
+        <section
+          className="home-page__timer-stage"
+          aria-label="뽀모도로 타이머"
+        >
           <TimerWidget />
         </section>
 
-        <aside className="home-page__side" aria-label="미디어와 기록">
+        <section className="home-page__media-stage" aria-label="현재 미디어">
           <MusicPlayer />
-          <SessionStatsPanel />
-        </aside>
+        </section>
+
+        <SessionStatsPanel />
       </main>
     </div>
   );

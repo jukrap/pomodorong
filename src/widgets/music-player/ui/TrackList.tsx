@@ -19,16 +19,15 @@ export function TrackList() {
 
   const handleTrackClick = (track: Track, index: number) => {
     const player = getMusicPlayer();
-    if (!player) return;
 
     const currentIndex = useMusicStackStore.getState().currentTrackIndex;
-    const currentTime = player.getCurrentTime();
+    const currentTime = player?.ready() ? player.getCurrentTime() : 0;
+
     useMusicStackStore.getState().savePlaybackState(mode, {
       trackIndex: currentIndex,
       currentTime,
     });
 
-    // 인덱스 업데이트
     useMusicStackStore.setState({ currentTrackIndex: index });
 
     useMusicStackStore.getState().savePlaybackState(mode, {
@@ -36,7 +35,10 @@ export function TrackList() {
       currentTime: 0,
     });
 
-    // 트랙 로드
+    if (!player?.ready()) {
+      return;
+    }
+
     player.play(track.videoId);
 
     if (status !== 'running') {
@@ -47,124 +49,47 @@ export function TrackList() {
   };
 
   return (
-    <div style={{ width: '100%', maxWidth: '500px' }}>
-      {/* 토글 버튼 */}
+    <div className="track-list">
       <button
+        className="track-list__toggle"
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          width: '100%',
-          padding: '12px',
-          fontSize: '14px',
-          fontWeight: '600',
-          color: '#4a5568',
-          background: 'rgba(255, 255, 255, 0.4)',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-        }}
+        aria-expanded={isOpen}
       >
-        {isOpen ? '▼' : '▶'} 재생목록 ({tracks.length}곡)
+        <span>{isOpen ? '접기' : '재생목록'}</span>
+        <strong>{tracks.length}곡</strong>
       </button>
 
-      {/* 트랙 목록 */}
       {isOpen && (
-        <div
-          style={{
-            marginTop: '8px',
-            padding: '12px',
-            background: 'rgba(255, 255, 255, 0.4)',
-            borderRadius: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-          }}
-        >
+        <div className="track-list__items">
           {tracks.map((track, index) => (
-            <div
+            <button
               key={track.videoId}
+              className={`track-list__item ${
+                index === currentTrackIndex ? 'track-list__item--active' : ''
+              }`}
+              type="button"
               onClick={() => handleTrackClick(track, index)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '8px',
-                background:
-                  index === currentTrackIndex
-                    ? 'rgba(255, 255, 255, 0.8)'
-                    : 'rgba(255, 255, 255, 0.3)',
-                borderRadius: '6px',
-                borderLeft:
-                  index === currentTrackIndex
-                    ? '3px solid #4ecdc4'
-                    : '3px solid transparent',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => {
-                if (index !== currentTrackIndex) {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
-                }
-              }}
-              onMouseLeave={e => {
-                if (index !== currentTrackIndex) {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                }
-              }}
             >
-              {/* 순서 */}
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  color: '#6c757d',
-                  minWidth: '20px',
-                }}
-              >
-                {index + 1}
-              </div>
+              <span className="track-list__index">{index + 1}</span>
 
-              {/* 썸네일 */}
               <img
+                className="track-list__thumb"
                 src={track.thumbnailUrl}
                 alt={track.title}
-                style={{
-                  width: '40px',
-                  height: '30px',
-                  objectFit: 'cover',
-                  borderRadius: '4px',
-                }}
+                loading="lazy"
               />
 
-              {/* 제목 */}
-              <div
-                style={{
-                  flex: 1,
-                  fontSize: '13px',
-                  color: '#2d2d2d',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {track.title}
-              </div>
+              <span className="track-list__title">{track.title}</span>
 
-              {/* 길이 */}
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: '#6c757d',
-                }}
-              >
+              <span className="track-list__duration">
                 {formatTrackDuration(track.durationSeconds)}
-              </div>
+              </span>
 
-              {/* 재생 중 표시 */}
               {index === currentTrackIndex && (
-                <div style={{ fontSize: '16px' }}>🎵</div>
+                <span className="track-list__active-dot" aria-label="선택됨" />
               )}
-            </div>
+            </button>
           ))}
         </div>
       )}

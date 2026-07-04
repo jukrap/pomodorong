@@ -6,8 +6,8 @@ import {
   PresetButtons,
   CustomTimerForm,
 } from '../../../features/timer/configure-timer';
-import { SessionCounter } from './SessionCounter';
 import { ProgressBar } from './ProgressBar';
+import './TimerWidget.css';
 
 export function TimerWidget() {
   const status = useTimerStore(state => state.status);
@@ -25,20 +25,16 @@ export function TimerWidget() {
   }, [status, tick]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '40px',
-      }}
-    >
-      <PresetButtons />
+    <div className="timer-widget">
+      <div className="timer-widget__presets">
+        <PresetButtons />
+      </div>
+      <div className="timer-widget__stage">
+        <TimerDisplay />
+        <ProgressBar />
+        <TimerControls />
+      </div>
       <CustomTimerForm />
-      <TimerDisplay />
-      <ProgressBar />
-      <SessionCounter />
-      <TimerControls />
     </div>
   );
 }

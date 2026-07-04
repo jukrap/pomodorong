@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { type CSSProperties, useState, useEffect } from 'react';
 import { getMusicPlayer } from '../model/playerAdapter';
 import {
   readStorageValue,
@@ -36,53 +36,22 @@ export function VolumeControl() {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        padding: '12px 16px',
-        background: 'rgba(255, 255, 255, 0.4)',
-        borderRadius: '8px',
-        width: '100%',
-        maxWidth: '500px',
-      }}
-    >
-      {/* 볼륨 아이콘 */}
-      <div style={{ fontSize: '20px' }}>
-        {volume === 0 ? '🔇' : volume < 50 ? '🔉' : '🔊'}
-      </div>
-
-      {/* 슬라이더 */}
+    <label className="volume-control">
+      <span>볼륨</span>
       <input
+        aria-label="미디어 볼륨"
         type="range"
         min="0"
         max="100"
         value={volume}
         onChange={e => handleVolumeChange(Number(e.target.value))}
-        style={{
-          flex: 1,
-          height: '6px',
-          borderRadius: '3px',
-          appearance: 'none',
-          background: `linear-gradient(to right, #4ecdc4 0%, #4ecdc4 ${volume}%, #ddd ${volume}%, #ddd 100%)`,
-          outline: 'none',
-          cursor: 'pointer',
-        }}
+        style={
+          {
+            '--volume-progress': `${volume}%`,
+          } as CSSProperties
+        }
       />
-
-      {/* 퍼센트 표시 */}
-      <div
-        style={{
-          fontSize: '14px',
-          fontWeight: '600',
-          color: '#4a5568',
-          minWidth: '45px',
-          textAlign: 'right',
-        }}
-      >
-        {volume}%
-      </div>
-    </div>
+      <strong>{volume}%</strong>
+    </label>
   );
 }

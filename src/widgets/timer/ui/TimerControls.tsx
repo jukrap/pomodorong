@@ -1,5 +1,5 @@
 import { useTimerStore } from '../../../entities/timer/model/store';
-import { Button } from '../../../shared/ui/Button/Button';
+import './TimerControls.css';
 
 export function TimerControls() {
   const status = useTimerStore(state => state.status);
@@ -8,19 +8,32 @@ export function TimerControls() {
   const reset = useTimerStore(state => state.reset);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '16px',
-      }}
-    >
+    <div className="timer-controls" aria-label="타이머 제어">
       {status === 'running' ? (
-        <Button onClick={pause}>일시정지</Button>
+        <button
+          className="timer-controls__button timer-controls__button--primary"
+          type="button"
+          onClick={pause}
+        >
+          일시정지
+        </button>
       ) : (
-        <Button onClick={start}>시작</Button>
+        <button
+          className="timer-controls__button timer-controls__button--primary"
+          type="button"
+          onClick={start}
+        >
+          시작
+        </button>
       )}
 
-      <Button onClick={reset}>리셋</Button>
+      <button
+        className="timer-controls__button timer-controls__button--secondary"
+        type="button"
+        onClick={reset}
+      >
+        리셋
+      </button>
     </div>
   );
 }

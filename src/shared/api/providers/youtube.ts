@@ -49,6 +49,65 @@ declare global {
   }
 }
 
+let youtubeApiPromise: Promise<YouTubeNamespace> | null = null;
+
+function loadYouTubeIframeApi(): Promise<YouTubeNamespace> {
+  if (window.YT?.Player) {
+    return Promise.resolve(window.YT);
+  }
+
+  if (youtubeApiPromise) {
+    return youtubeApiPromise;
+  }
+
+  youtubeApiPromise = new Promise((resolve, reject) => {
+    const startedAt = Date.now();
+    const previousReady = window.onYouTubeIframeAPIReady;
+
+    window.onYouTubeIframeAPIReady = () => {
+      previousReady?.();
+
+      if (window.YT?.Player) {
+        resolve(window.YT);
+        return;
+      }
+
+      reject(new Error('YouTube API callback fired without Player.'));
+    };
+
+    if (
+      !document.querySelector(
+        'script[src="https://www.youtube.com/iframe_api"]'
+      )
+    ) {
+      const script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      script.async = true;
+      script.onerror = () => {
+        youtubeApiPromise = null;
+        reject(new Error('YouTube IFrame API script failed to load.'));
+      };
+      document.head.append(script);
+    }
+
+    const checkReady = window.setInterval(() => {
+      if (window.YT?.Player) {
+        window.clearInterval(checkReady);
+        resolve(window.YT);
+        return;
+      }
+
+      if (Date.now() - startedAt > 8000) {
+        window.clearInterval(checkReady);
+        youtubeApiPromise = null;
+        reject(new Error('YouTube IFrame API timed out.'));
+      }
+    }, 100);
+  });
+
+  return youtubeApiPromise;
+}
+
 interface YouTubeProviderOptions {
   onTrackEnd?: () => void;
   onStatusChange?: (
@@ -64,6 +123,9 @@ type YouTubeStatusChangeHandler = NonNullable<
 export class YouTubeProvider {
   private player: YouTubePlayer | null = null;
   private isReady = false;
+  private isDestroyed = false;
+  private readyTimeoutId: number | null = null;
+  private trackLoadTimeoutId: number | null = null;
   private onTrackEnd: (() => void) | null = null;
   private onStatusChange: YouTubeStatusChangeHandler | null = null;
 
@@ -71,35 +133,62 @@ export class YouTubeProvider {
     containerId: string,
     options: YouTubeProviderOptions = {}
   ): Promise<void> {
+    this.isDestroyed = false;
     this.onTrackEnd = options.onTrackEnd || null;
     this.onStatusChange = options.onStatusChange || null;
-    this.setStatus('loading', 'YouTube 플레이어를 준비하는 중입니다.');
+    this.setStatus('loading', '연결 중');
 
-    return new Promise((resolve, reject) => {
-      const startedAt = Date.now();
-      const checkYT = window.setInterval(() => {
-        if (window.YT?.Player) {
-          window.clearInterval(checkYT);
-          this.createPlayer(containerId, resolve);
-          return;
-        }
+    try {
+      const YT = await loadYouTubeIframeApi();
 
-        if (Date.now() - startedAt > 8000) {
-          window.clearInterval(checkYT);
-          const message = 'YouTube 플레이어를 불러오지 못했습니다.';
-          this.setStatus('error', message);
-          reject(new Error(message));
-        }
-      }, 100);
-    });
+      if (this.isDestroyed) {
+        return;
+      }
+
+      return new Promise(resolve => {
+        this.createPlayer(YT, containerId, resolve);
+      });
+    } catch (error) {
+      const message =
+        '플레이어 연결에 실패했습니다. 다시 시도하거나 YouTube에서 열어 주세요.';
+      this.setStatus('error', message);
+      throw error;
+    }
   }
 
-  private createPlayer(containerId: string, onComplete: () => void) {
-    const YT = window.YT;
-    if (!YT) {
-      this.setStatus('error', 'YouTube API가 아직 준비되지 않았습니다.');
-      return;
-    }
+  private createPlayer(
+    YT: YouTubeNamespace,
+    containerId: string,
+    onComplete: () => void
+  ) {
+    let isComplete = false;
+
+    const completeOnce = () => {
+      if (isComplete) {
+        return;
+      }
+
+      isComplete = true;
+
+      if (this.readyTimeoutId !== null) {
+        window.clearTimeout(this.readyTimeoutId);
+        this.readyTimeoutId = null;
+      }
+
+      onComplete();
+    };
+
+    this.readyTimeoutId = window.setTimeout(() => {
+      if (this.isReady || this.isDestroyed) {
+        return;
+      }
+
+      this.setStatus(
+        'error',
+        '플레이어가 응답하지 않습니다. 다시 시도하거나 YouTube에서 열어 주세요.'
+      );
+      completeOnce();
+    }, 8000);
 
     this.player = new YT.Player(containerId, {
       height: '360',
@@ -113,16 +202,20 @@ export class YouTubeProvider {
       },
       events: {
         onReady: () => {
+          if (this.isDestroyed) {
+            return;
+          }
+
           this.isReady = true;
           this.setStatus('ready', null);
-          onComplete();
+          completeOnce();
         },
         onStateChange: this.handleStateChange.bind(this),
         onError: this.handleError.bind(this),
         onAutoplayBlocked: () => {
           this.setStatus(
             'autoplay-blocked',
-            '브라우저가 자동재생을 차단했습니다. 시작 버튼을 누른 뒤 다시 재생해 주세요.'
+            '자동재생이 차단되었습니다. 시작 후 다시 재생해 주세요.'
           );
         },
       },
@@ -130,6 +223,12 @@ export class YouTubeProvider {
   }
 
   private handleError(event: YouTubePlayerEvent) {
+    if (this.isDestroyed) {
+      return;
+    }
+
+    this.clearTrackLoadTimeout();
+
     const errorCode = event.data;
     const message = this.getErrorMessage(errorCode);
     const status: MediaPlaybackStatus =
@@ -147,6 +246,10 @@ export class YouTubeProvider {
   }
 
   private handleStateChange(event: YouTubePlayerEvent) {
+    if (this.isDestroyed) {
+      return;
+    }
+
     if (event.data === 0) {
       this.onTrackEnd?.();
       return;
@@ -154,10 +257,12 @@ export class YouTubeProvider {
 
     if (event.data === 3) {
       this.setStatus('loading', '트랙을 불러오는 중입니다.');
+      this.scheduleTrackLoadFallback();
       return;
     }
 
     if (event.data === 1 || event.data === 2 || event.data === 5) {
+      this.clearTrackLoadTimeout();
       this.setStatus('ready', null);
     }
   }
@@ -172,7 +277,7 @@ export class YouTubeProvider {
         return '비디오를 찾을 수 없습니다.';
       case 101:
       case 150:
-        return '이 비디오는 임베드 재생이 차단되어 다음 트랙으로 넘어갑니다.';
+        return '임베드 재생이 차단된 트랙입니다. 다음 트랙으로 넘어갑니다.';
       default:
         return `알 수 없는 YouTube 오류입니다. 코드: ${errorCode}`;
     }
@@ -182,10 +287,35 @@ export class YouTubeProvider {
     this.onStatusChange?.(status, message ?? null);
   }
 
+  private scheduleTrackLoadFallback() {
+    this.clearTrackLoadTimeout();
+
+    this.trackLoadTimeoutId = window.setTimeout(() => {
+      if (this.isDestroyed || !this.isReady) {
+        return;
+      }
+
+      this.setStatus(
+        'autoplay-blocked',
+        '재생이 시작되지 않았습니다. 시작 후 다시 시도하거나 YouTube에서 열어 주세요.'
+      );
+    }, 7000);
+  }
+
+  private clearTrackLoadTimeout() {
+    if (this.trackLoadTimeoutId === null) {
+      return;
+    }
+
+    window.clearTimeout(this.trackLoadTimeoutId);
+    this.trackLoadTimeoutId = null;
+  }
+
   play(videoId: string) {
     if (this.isReady && this.player) {
-      this.setStatus('loading', '트랙을 불러오는 중입니다.');
+      this.setStatus('loading', '트랙 연결 중');
       this.player.loadVideoById(videoId);
+      this.scheduleTrackLoadFallback();
     }
   }
 
@@ -240,7 +370,20 @@ export class YouTubeProvider {
     return 0;
   }
 
+  ready(): boolean {
+    return this.isReady && Boolean(this.player);
+  }
+
   destroy() {
+    this.isDestroyed = true;
+
+    if (this.readyTimeoutId !== null) {
+      window.clearTimeout(this.readyTimeoutId);
+      this.readyTimeoutId = null;
+    }
+
+    this.clearTrackLoadTimeout();
+
     this.player?.destroy?.();
     this.player = null;
     this.isReady = false;

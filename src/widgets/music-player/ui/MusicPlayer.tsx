@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { YouTubeProvider } from '../../../shared/api/providers/youtube';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { useMusicStackStore } from '../../../entities/music-stack/model/store';
@@ -11,13 +11,16 @@ import './MusicPlayer.css';
 
 export function MusicPlayer() {
   const playerRef = useRef<YouTubeProvider | null>(null);
-  const isInitialized = useRef(false);
   const didSyncInitialMode = useRef(false);
+  const [retryNonce, setRetryNonce] = useState(0);
 
   const mode = useTimerStore(state => state.mode);
   const timerStatus = useTimerStore(state => state.status);
 
   const getCurrentTracks = useMusicStackStore(state => state.getCurrentTracks);
+  const currentTrackIndex = useMusicStackStore(
+    state => state.currentTrackIndex
+  );
   const getPlaybackState = useMusicStackStore(state => state.getPlaybackState);
   const savePlaybackState = useMusicStackStore(
     state => state.savePlaybackState
@@ -29,10 +32,36 @@ export function MusicPlayer() {
   );
 
   const tracks = getCurrentTracks(mode);
+  const currentTrack = tracks[currentTrackIndex] ?? null;
+  const hasActionableIssue =
+    playbackStatus === 'error' ||
+    playbackStatus === 'unavailable' ||
+    playbackStatus === 'autoplay-blocked';
+  const statusMessage = useMemo(() => {
+    if (playbackMessage) {
+      return playbackMessage;
+    }
+
+    switch (playbackStatus) {
+      case 'loading':
+        return '연결 중';
+      case 'ready':
+        return '연결됨';
+      case 'idle':
+        return tracks.length > 0 ? '대기 중' : '미디어 없음';
+      case 'error':
+        return '연결 실패';
+      case 'autoplay-blocked':
+        return '자동재생 차단';
+      case 'unavailable':
+        return '재생 불가';
+      default:
+        return '대기 중';
+    }
+  }, [playbackMessage, playbackStatus, tracks.length]);
 
   useEffect(() => {
-    if (isInitialized.current) return;
-    isInitialized.current = true;
+    let isDisposed = false;
 
     const provider = new YouTubeProvider();
     playerRef.current = provider;
@@ -47,7 +76,9 @@ export function MusicPlayer() {
         return;
       }
 
-      provider.play(next.videoId);
+      if (provider.ready()) {
+        provider.play(next.videoId);
+      }
 
       const newIndex = useMusicStackStore.getState().currentTrackIndex;
       useMusicStackStore.getState().savePlaybackState(currentMode, {
@@ -62,6 +93,10 @@ export function MusicPlayer() {
         onStatusChange: setPlaybackStatus,
       })
       .then(() => {
+        if (isDisposed || !provider.ready()) {
+          return;
+        }
+
         const currentMode = useTimerStore.getState().mode;
         const savedState = useMusicStackStore
           .getState()
@@ -99,7 +134,7 @@ export function MusicPlayer() {
       });
 
     const saveInterval = window.setInterval(() => {
-      if (useTimerStore.getState().status !== 'running') {
+      if (useTimerStore.getState().status !== 'running' || !provider.ready()) {
         return;
       }
 
@@ -114,16 +149,17 @@ export function MusicPlayer() {
     }, 5000);
 
     return () => {
+      isDisposed = true;
       window.clearInterval(saveInterval);
       provider.destroy();
       playerRef.current = null;
       setMusicPlayer(null);
     };
-  }, [setPlaybackStatus]);
+  }, [retryNonce, setPlaybackStatus]);
 
   useEffect(() => {
     const player = getMusicPlayer();
-    if (!player) return;
+    if (!player?.ready()) return;
 
     if (timerStatus === 'running') {
       player.resume();
@@ -140,7 +176,21 @@ export function MusicPlayer() {
     }
 
     const player = getMusicPlayer();
-    if (!player) return;
+    if (!player?.ready()) {
+      const savedState = getPlaybackState(mode);
+      const currentTracks = getCurrentTracks(mode);
+
+      useMusicStackStore.setState({
+        currentTrackIndex:
+          currentTracks.length === 0
+            ? 0
+            : Math.max(
+                0,
+                Math.min(savedState.trackIndex, currentTracks.length - 1)
+              ),
+      });
+      return;
+    }
 
     const previousMode = mode === 'work' ? 'break' : 'work';
     const previousIndex = useMusicStackStore.getState().currentTrackIndex;
@@ -186,25 +236,45 @@ export function MusicPlayer() {
     setPlaybackStatus,
   ]);
 
-  const statusMessage =
-    playbackMessage ||
-    (playbackStatus === 'loading' ? '미디어를 준비하는 중입니다.' : null);
+  const handleRetry = () => {
+    setPlaybackStatus('loading', '연결 중');
+    setRetryNonce(nonce => nonce + 1);
+  };
+
+  const handleOpenInYouTube = () => {
+    if (!currentTrack) {
+      return;
+    }
+
+    window.open(
+      `https://www.youtube.com/watch?v=${currentTrack.videoId}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
+  };
 
   return (
-    <section className="music-player" aria-labelledby="music-player-title">
+    <section
+      className={`music-player music-player--${playbackStatus}`}
+      aria-labelledby="music-player-title"
+    >
       <div className="music-player__header">
         <h2 id="music-player-title">
-          {mode === 'work' ? '작업 음악' : '휴식 음악'}
+          {mode === 'work' ? '작업 미디어' : '휴식 미디어'}
         </h2>
-        <span className="music-player__mode">
-          {mode === 'work' ? 'focus stack' : 'break stack'}
-        </span>
+        <div
+          className={`music-player__connection music-player__connection--${playbackStatus}`}
+          aria-live={playbackStatus === 'ready' ? 'off' : 'polite'}
+        >
+          <span className="music-player__connection-dot" aria-hidden="true" />
+          <span data-testid="playback-status">{statusMessage}</span>
+        </div>
       </div>
 
-      {statusMessage && (
+      {hasActionableIssue && (
         <p
           className={`music-player__status music-player__status--${playbackStatus}`}
-          role={playbackStatus === 'ready' ? undefined : 'status'}
+          role="status"
         >
           {statusMessage}
         </p>
@@ -217,8 +287,29 @@ export function MusicPlayer() {
         </div>
       ) : (
         <>
-          <CurrentTrack />
-          <PlaybackControls />
+          <div className="music-player__dock">
+            <CurrentTrack />
+            <div className="music-player__actions" aria-label="미디어 제어">
+              <PlaybackControls />
+              <button
+                className="music-player__action"
+                type="button"
+                onClick={handleRetry}
+                data-testid="retry-player"
+              >
+                재시도
+              </button>
+              <button
+                className="music-player__action"
+                type="button"
+                onClick={handleOpenInYouTube}
+                disabled={!currentTrack}
+                data-testid="open-youtube"
+              >
+                YouTube에서 열기
+              </button>
+            </div>
+          </div>
           <TrackList />
           <VolumeControl />
         </>

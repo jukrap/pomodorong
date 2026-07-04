@@ -6,13 +6,16 @@ export function PlaybackControls() {
   const mode = useTimerStore(state => state.mode);
   const status = useTimerStore(state => state.status);
   const nextTrack = useMusicStackStore(state => state.nextTrack);
+  const getCurrentTracks = useMusicStackStore(state => state.getCurrentTracks);
+
+  const tracks = getCurrentTracks(mode);
 
   const handleNext = () => {
     const player = getMusicPlayer();
-    if (!player) return;
 
     const currentIndex = useMusicStackStore.getState().currentTrackIndex;
-    const currentTime = player.getCurrentTime();
+    const currentTime = player?.ready() ? player.getCurrentTime() : 0;
+
     useMusicStackStore.getState().savePlaybackState(mode, {
       trackIndex: currentIndex,
       currentTime,
@@ -26,6 +29,10 @@ export function PlaybackControls() {
         currentTime: 0,
       });
 
+      if (!player?.ready()) {
+        return;
+      }
+
       player.play(next.videoId);
 
       if (status !== 'running') {
@@ -37,39 +44,15 @@ export function PlaybackControls() {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '8px',
-      }}
-    >
+    <div className="playback-controls">
       <button
+        className="music-player__action music-player__action--primary"
+        type="button"
         onClick={handleNext}
-        style={{
-          padding: '10px 20px',
-          fontSize: '14px',
-          fontWeight: '600',
-          color: '#4a5568',
-          background: 'rgba(255, 255, 255, 0.6)',
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
-          e.currentTarget.style.transform = 'translateY(-1px)';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
-          e.currentTarget.style.transform = 'translateY(0)';
-        }}
+        disabled={tracks.length <= 1}
+        data-testid="next-track"
       >
-        <span>⏭️</span>
-        <span>다음 곡</span>
+        다음
       </button>
     </div>
   );
