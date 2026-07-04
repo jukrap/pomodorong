@@ -44,7 +44,10 @@
   letter-spacing: 0;
 }
 
-.home-page__brand h1 span,
+.home-page__brand h1 span {
+  font-weight: 520;
+}
+
 .home-page__brand h1 strong {
   font-weight: 700;
 }

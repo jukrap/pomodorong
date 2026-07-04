@@ -1,5 +1,5 @@
 .liquid-timer {
-  width: min(720px, calc(100vw - 32px));
+  width: min(760px, calc(100vw - 32px));
   max-width: 100%;
   height: auto;
   display: block;
@@ -16,8 +16,8 @@
     BlinkMacSystemFont,
     'Segoe UI',
     sans-serif;
-  font-size: 136px;
-  font-weight: 640;
+  font-size: 172px;
+  font-weight: 650;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
 }
@@ -55,13 +55,13 @@
 
 @media (max-width: 900px) {
   .liquid-timer {
-    width: min(620px, calc(100vw - 32px));
+    width: min(660px, calc(100vw - 32px));
   }
 }
 
 @media (max-width: 760px) {
   .liquid-timer {
-    width: min(460px, calc(100vw - 32px));
+    width: min(470px, calc(100vw - 32px));
   }
 }
 

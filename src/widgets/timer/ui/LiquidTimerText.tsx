@@ -10,15 +10,15 @@ interface LiquidTimerTextProps {
   label: string;
 }
 
-const VIEWBOX_WIDTH = 920;
-const VIEWBOX_HEIGHT = 176;
+const VIEWBOX_WIDTH = 1020;
+const VIEWBOX_HEIGHT = 260;
 
 function clampProgress(progress: number) {
   return Math.max(0, Math.min(1, progress));
 }
 
 function buildWavePath(levelY: number, amplitude: number, offset: number) {
-  const segmentWidth = 92;
+  const segmentWidth = 102;
   const startX = -segmentWidth * 2;
   const endX = VIEWBOX_WIDTH + segmentWidth * 2;
   const parts = [`M ${startX} ${levelY + offset}`];
@@ -57,7 +57,7 @@ export function LiquidTimerText({
   const visibleProgress =
     clampedProgress === 0 ? 0 : Math.max(0.04, clampedProgress);
   const liquidLevel = Math.round(visibleProgress * 100);
-  const levelY = 158 - visibleProgress * 126;
+  const levelY = 226 - visibleProgress * 176;
   const maskId = `liquid-timer-mask-${id}`;
   const gradientId = `liquid-timer-gradient-${id}`;
   const glowId = `liquid-timer-glow-${id}`;
@@ -98,8 +98,8 @@ export function LiquidTimerText({
         >
           <feDropShadow
             dx="0"
-            dy="10"
-            stdDeviation="8"
+            dy="12"
+            stdDeviation="9"
             floodColor="#07101f"
             floodOpacity="0.12"
           />
@@ -119,8 +119,8 @@ export function LiquidTimerText({
             y="51%"
             dominantBaseline="middle"
             textAnchor="middle"
-            textLength="770"
-            lengthAdjust="spacingAndGlyphs"
+            textLength="690"
+            lengthAdjust="spacing"
             fill="white"
           >
             {value}
@@ -134,8 +134,8 @@ export function LiquidTimerText({
         y="51%"
         dominantBaseline="middle"
         textAnchor="middle"
-        textLength="770"
-        lengthAdjust="spacingAndGlyphs"
+        textLength="690"
+        lengthAdjust="spacing"
         filter={`url(#${glowId})`}
       >
         {value}
@@ -152,21 +152,21 @@ export function LiquidTimerText({
         />
         <motion.path
           className="liquid-timer__wave liquid-timer__wave--front"
-          d={buildWavePath(levelY, 10, 0)}
+          d={buildWavePath(levelY, 12, 0)}
           fill={`url(#${gradientId})`}
           animate={waveMotion}
           transition={waveTransition}
         />
         <motion.path
           className="liquid-timer__wave liquid-timer__wave--back"
-          d={buildWavePath(levelY + 8, 15, 0)}
+          d={buildWavePath(levelY + 10, 18, 0)}
           fill={`url(#${gradientId})`}
           animate={reverseWaveMotion}
           transition={reverseWaveTransition}
         />
         <motion.path
           className="liquid-timer__wave liquid-timer__wave--shine"
-          d={buildWavePath(levelY - 7, 7, 0)}
+          d={buildWavePath(levelY - 8, 8, 0)}
           fill="#ffffff"
           animate={reverseWaveMotion}
           transition={reverseWaveTransition}
