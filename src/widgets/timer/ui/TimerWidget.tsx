@@ -2,9 +2,12 @@ import { useEffect } from 'react';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { TimerDisplay } from './TimerDisplay';
 import { TimerControls } from './TimerControls';
-import { PresetButtons, CustomTimerForm } from '../../../features/timer/configure-timer';
-import { getMusicPlayer } from '../../music-player/ui/MusicPlayer';
+import {
+  PresetButtons,
+  CustomTimerForm,
+} from '../../../features/timer/configure-timer';
 import { SessionCounter } from './SessionCounter';
+import { ProgressBar } from './ProgressBar';
 
 export function TimerWidget() {
   const status = useTimerStore(state => state.status);
@@ -21,18 +24,6 @@ export function TimerWidget() {
     }
   }, [status, tick]);
 
-  // 음악 재생/일시정지 연동
-  useEffect(() => {
-    const player = getMusicPlayer();
-    if (!player) return;
-
-    if (status === 'running') {
-      player.resume();
-    } else if (status === 'paused') {
-      player.pause();
-    }
-  }, [status]);
-
   return (
     <div
       style={{
@@ -45,6 +36,7 @@ export function TimerWidget() {
       <PresetButtons />
       <CustomTimerForm />
       <TimerDisplay />
+      <ProgressBar />
       <SessionCounter />
       <TimerControls />
     </div>

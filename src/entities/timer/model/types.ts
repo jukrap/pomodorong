@@ -18,29 +18,33 @@ export interface TimerPreset {
   breakDuration: number;
 }
 
+export interface TimerSettings {
+  currentPreset: TimerPreset;
+}
+
 export const DEFAULT_PRESETS: TimerPreset[] = [
   {
     id: 'classic',
     name: '클래식',
     workDuration: 25,
-    breakDuration: 5
+    breakDuration: 5,
   },
   {
     id: 'standard',
     name: '스탠다드',
     workDuration: 50,
-    breakDuration: 10
+    breakDuration: 10,
   },
   {
     id: 'deepwork',
     name: '딥워크',
     workDuration: 120,
-    breakDuration: 30
+    breakDuration: 30,
   },
   {
     id: 'custom',
     name: '커스텀',
     workDuration: 90,
-    breakDuration: 20
-  }
+    breakDuration: 20,
+  },
 ];

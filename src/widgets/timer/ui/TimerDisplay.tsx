@@ -1,4 +1,5 @@
 import { useTimerStore } from '../../../entities/timer/model/store';
+import './TimerDisplay.css';
 
 export function TimerDisplay() {
   const currentTime = useTimerStore(state => state.currentTime);
@@ -11,33 +12,12 @@ export function TimerDisplay() {
   const formatTime = (num: number) => String(num).padStart(2, '0');
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '20px',
-      }}
-    >
-      <h2
-        style={{
-          fontSize: '24px',
-          fontWeight: '600',
-          color: mode === 'work' ? '#4a5568' : '#2d3748',
-        }}
-      >
+    <div className="timer-display">
+      <h2 className={`timer-display__mode timer-display__mode--${mode}`}>
         {mode === 'work' ? '🔥 작업 시간' : '☕ 휴식 시간'}
       </h2>
 
-      <div
-        style={{
-          fontSize: '72px',
-          fontWeight: '700',
-          fontFamily: 'monospace',
-          color: '#2d2d2d',
-          letterSpacing: '4px',
-        }}
-      >
+      <div className="timer-display__time">
         {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}
       </div>
     </div>

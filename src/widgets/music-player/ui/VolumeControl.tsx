@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
-import { getMusicPlayer } from './MusicPlayer';
+import { getMusicPlayer } from '../model/playerAdapter';
+import {
+  readStorageValue,
+  writeStorageValue,
+} from '../../../shared/lib/storage/pomodorongStorage';
+
+const MUSIC_VOLUME_STORAGE_KEY = 'music-volume';
 
 /**
  * VolumeControl: 볼륨 조절 슬라이더
- * 
+ *
  * localStorage에 볼륨 저장해서 다음에도 유지
  */
 export function VolumeControl() {
   const [volume, setVolume] = useState(() => {
-    const saved = localStorage.getItem('musicVolume');
-    return saved ? Number(saved) : 50;
+    return readStorageValue(MUSIC_VOLUME_STORAGE_KEY, 50);
   });
 
   // 초기 볼륨 설정
@@ -22,8 +27,8 @@ export function VolumeControl() {
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
-    localStorage.setItem('musicVolume', String(newVolume));
-    
+    writeStorageValue(MUSIC_VOLUME_STORAGE_KEY, newVolume);
+
     const player = getMusicPlayer();
     if (player) {
       player.setVolume(newVolume);

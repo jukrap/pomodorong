@@ -1,20 +1,12 @@
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { useMusicStackStore } from '../../../entities/music-stack/model/store';
+import { formatTrackDuration } from '../../../entities/track/lib/formatTrackDuration';
 
 export function CurrentTrack() {
   const mode = useTimerStore(state => state.mode);
   const getCurrentTrack = useMusicStackStore(state => state.getCurrentTrack);
-  const currentTrackIndex = useMusicStackStore(
-    state => state.currentTrackIndex
-  );
 
   const currentTrack = getCurrentTrack(mode);
-
-  console.log('🎵 CurrentTrack render:', {
-    mode,
-    index: currentTrackIndex,
-    track: currentTrack?.title,
-  });
 
   if (!currentTrack) {
     return null;
@@ -35,7 +27,7 @@ export function CurrentTrack() {
     >
       {/* 썸네일 */}
       <img
-        src={currentTrack.thumbnail}
+        src={currentTrack.thumbnailUrl}
         alt={currentTrack.title}
         style={{
           width: '80px',
@@ -49,6 +41,7 @@ export function CurrentTrack() {
       <div
         style={{
           flex: 1,
+          minWidth: 0,
           overflow: 'hidden',
         }}
       >
@@ -71,9 +64,7 @@ export function CurrentTrack() {
             color: '#6c757d',
           }}
         >
-          {currentTrack.duration > 0
-            ? `${Math.floor(currentTrack.duration / 60)}분`
-            : '라이브 스트림'}
+          {formatTrackDuration(currentTrack.durationSeconds)}
         </div>
       </div>
 

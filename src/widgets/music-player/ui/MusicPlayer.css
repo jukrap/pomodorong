@@ -1,0 +1,80 @@
+.music-player {
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  gap: 16px;
+}
+
+.music-player > * {
+  min-width: 0;
+}
+
+.music-player__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.music-player__header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #20242b;
+}
+
+.music-player__mode {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #6f7785;
+}
+
+.music-player__status,
+.music-player__empty {
+  border: 1px solid #d8dde7;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.music-player__status--error,
+.music-player__status--unavailable {
+  border-color: #f3c3bd;
+  background: #fff5f3;
+  color: #9f2d20;
+}
+
+.music-player__status--autoplay-blocked {
+  border-color: #f0d28a;
+  background: #fff9e8;
+  color: #7b5516;
+}
+
+.music-player__empty {
+  display: grid;
+  gap: 4px;
+}
+
+.music-player__empty strong {
+  color: #20242b;
+}
+
+.music-player__youtube-host {
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .music-player__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+}

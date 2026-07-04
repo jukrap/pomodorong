@@ -1,42 +1,40 @@
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { useMusicStackStore } from '../../../entities/music-stack/model/store';
-import { getMusicPlayer } from './MusicPlayer';
+import { getMusicPlayer } from '../model/playerAdapter';
 
 export function PlaybackControls() {
   const mode = useTimerStore(state => state.mode);
   const status = useTimerStore(state => state.status);
   const nextTrack = useMusicStackStore(state => state.nextTrack);
 
-const handleNext = () => {
-  const player = getMusicPlayer();
-  if (!player) return;
+  const handleNext = () => {
+    const player = getMusicPlayer();
+    if (!player) return;
 
-  const currentIndex = useMusicStackStore.getState().currentTrackIndex;
-  const currentTime = player.getCurrentTime();
-  useMusicStackStore.getState().savePlaybackState(mode, {
-    trackIndex: currentIndex,
-    currentTime,
-  });
-
-  const next = nextTrack(mode);
-  if (next) {
-    console.log('⏭️ Next track:', next.title);
-
-    const newIndex = useMusicStackStore.getState().currentTrackIndex;
+    const currentIndex = useMusicStackStore.getState().currentTrackIndex;
+    const currentTime = player.getCurrentTime();
     useMusicStackStore.getState().savePlaybackState(mode, {
-      trackIndex: newIndex,
-      currentTime: 0,
+      trackIndex: currentIndex,
+      currentTime,
     });
 
-    player.play(next.id);
+    const next = nextTrack(mode);
+    if (next) {
+      const newIndex = useMusicStackStore.getState().currentTrackIndex;
+      useMusicStackStore.getState().savePlaybackState(mode, {
+        trackIndex: newIndex,
+        currentTime: 0,
+      });
 
-    if (status !== 'running') {
-      setTimeout(() => {
-        player.pause();
-      }, 500);
+      player.play(next.videoId);
+
+      if (status !== 'running') {
+        window.setTimeout(() => {
+          player.pause();
+        }, 500);
+      }
     }
-  }
-};
+  };
 
   return (
     <div

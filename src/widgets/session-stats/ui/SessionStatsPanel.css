@@ -1,0 +1,57 @@
+.session-stats {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #d8dde7;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.session-stats__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.session-stats__header h2 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #20242b;
+}
+
+.session-stats__header span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a8392;
+}
+
+.session-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.session-stats__grid div {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f6f8fb;
+}
+
+.session-stats__grid dt {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6f7785;
+}
+
+.session-stats__grid dd {
+  font-size: 22px;
+  font-weight: 800;
+  color: #20242b;
+}
+
+.session-stats__wide {
+  grid-column: 1 / -1;
+}

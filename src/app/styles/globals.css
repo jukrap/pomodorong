@@ -6,10 +6,20 @@
 }
 
 body {
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #f0ede9 0%, #e8d5c4 100%);
-  color: #2d2d2d;
+  font-family:
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  background: #eef1f6;
+  color: #20242b;
   min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
 }
 
 /* 폰트 부드럽게 */

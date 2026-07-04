@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { useTimerStore } from '../../../entities/timer/model/store';
 import { useMusicStackStore } from '../../../entities/music-stack/model/store';
-import { getMusicPlayer } from './MusicPlayer';
+import { getMusicPlayer } from '../model/playerAdapter';
 import type { Track } from '../../../entities/track/model/types';
+import { formatTrackDuration } from '../../../entities/track/lib/formatTrackDuration';
 
 export function TrackList() {
   const [isOpen, setIsOpen] = useState(false);
 
   const mode = useTimerStore(state => state.mode);
   const status = useTimerStore(state => state.status);
-  const getCurrentTracks = useMusicStackStore(
-    state => state.getCurrentTracks
-  );
+  const getCurrentTracks = useMusicStackStore(state => state.getCurrentTracks);
   const currentTrackIndex = useMusicStackStore(
     state => state.currentTrackIndex
   );
@@ -19,39 +18,33 @@ export function TrackList() {
   const tracks = getCurrentTracks(mode);
 
   const handleTrackClick = (track: Track, index: number) => {
-  const player = getMusicPlayer();
-  if (!player) return;
+    const player = getMusicPlayer();
+    if (!player) return;
 
-  console.log('🎵 Selected track:', track.title);
+    const currentIndex = useMusicStackStore.getState().currentTrackIndex;
+    const currentTime = player.getCurrentTime();
+    useMusicStackStore.getState().savePlaybackState(mode, {
+      trackIndex: currentIndex,
+      currentTime,
+    });
 
-  const currentIndex = useMusicStackStore.getState().currentTrackIndex;
-  const currentTime = player.getCurrentTime();
-  useMusicStackStore.getState().savePlaybackState(mode, {
-    trackIndex: currentIndex,
-    currentTime,
-  });
+    // 인덱스 업데이트
+    useMusicStackStore.setState({ currentTrackIndex: index });
 
-  // 인덱스 업데이트
-  useMusicStackStore.setState({ currentTrackIndex: index });
+    useMusicStackStore.getState().savePlaybackState(mode, {
+      trackIndex: index,
+      currentTime: 0,
+    });
 
-  useMusicStackStore.getState().savePlaybackState(mode, {
-    trackIndex: index,
-    currentTime: 0,
-  });
+    // 트랙 로드
+    player.play(track.videoId);
 
-  // 트랙 로드
-  player.play(track.id);
-
-  // 타이머 상태에 따라 재생/일시정지
-  if (status === 'running') {
-    console.log('▶️ Timer running, playing track');
-  } else {
-    console.log('⏸️ Timer stopped, loading but paused');
-    setTimeout(() => {
-      player.pause();
-    }, 500);
-  }
-};
+    if (status !== 'running') {
+      window.setTimeout(() => {
+        player.pause();
+      }, 500);
+    }
+  };
 
   return (
     <div style={{ width: '100%', maxWidth: '500px' }}>
@@ -89,7 +82,7 @@ export function TrackList() {
         >
           {tracks.map((track, index) => (
             <div
-              key={track.id}
+              key={track.videoId}
               onClick={() => handleTrackClick(track, index)}
               style={{
                 display: 'flex',
@@ -110,14 +103,12 @@ export function TrackList() {
               }}
               onMouseEnter={e => {
                 if (index !== currentTrackIndex) {
-                  e.currentTarget.style.background =
-                    'rgba(255, 255, 255, 0.6)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
                 }
               }}
               onMouseLeave={e => {
                 if (index !== currentTrackIndex) {
-                  e.currentTarget.style.background =
-                    'rgba(255, 255, 255, 0.3)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
                 }
               }}
             >
@@ -135,7 +126,7 @@ export function TrackList() {
 
               {/* 썸네일 */}
               <img
-                src={track.thumbnail}
+                src={track.thumbnailUrl}
                 alt={track.title}
                 style={{
                   width: '40px',
@@ -166,9 +157,7 @@ export function TrackList() {
                   color: '#6c757d',
                 }}
               >
-                {track.duration > 0
-                  ? `${Math.floor(track.duration / 60)}분`
-                  : 'LIVE'}
+                {formatTrackDuration(track.durationSeconds)}
               </div>
 
               {/* 재생 중 표시 */}
