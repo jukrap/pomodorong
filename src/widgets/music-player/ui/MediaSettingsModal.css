@@ -264,7 +264,9 @@
 
 .media-settings__add-panel {
   padding: 20px;
-  overflow: visible;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .media-settings__section-heading {
@@ -534,6 +536,9 @@
 
   .media-settings__add-panel {
     order: -1;
+    overflow: visible;
+    overscroll-behavior: auto;
+    scrollbar-gutter: auto;
   }
 
   .media-settings__workspace {

@@ -13,7 +13,11 @@ const actionMotion = {
   transition: { type: 'spring' as const, stiffness: 520, damping: 34 },
 };
 
-export function MusicPlayer() {
+interface MusicPlayerProps {
+  onOpenSettings: () => void;
+}
+
+export function MusicPlayer({ onOpenSettings }: MusicPlayerProps) {
   const playerRef = useRef<YouTubeProvider | null>(null);
   const didSyncInitialMode = useRef(false);
   const [retryNonce, setRetryNonce] = useState(0);
@@ -269,16 +273,21 @@ export function MusicPlayer() {
           <div className="music-player__dock">
             <CurrentTrack />
             <div className="music-player__side">
-              <div
+              <motion.button
                 className={`music-player__connection music-player__connection--${playbackStatus}`}
                 aria-live={playbackStatus === 'ready' ? 'off' : 'polite'}
+                aria-label={`Open media library settings. ${statusMessage}. YouTube player.`}
+                data-testid="open-settings-from-player"
+                onClick={onOpenSettings}
+                type="button"
+                {...actionMotion}
               >
                 <span
                   className="music-player__connection-dot"
                   aria-hidden="true"
                 />
                 <span data-testid="playback-status">{statusMessage}</span>
-              </div>
+              </motion.button>
 
               <div
                 className="music-player__actions"

@@ -50,6 +50,11 @@ export function HomePage() {
     setToast(null);
   }, []);
 
+  const openSettings = useCallback(() => {
+    dismissToast();
+    setIsSettingsOpen(true);
+  }, [dismissToast]);
+
   useEffect(() => {
     return () => {
       if (toastTimeoutRef.current !== null) {
@@ -120,10 +125,7 @@ export function HomePage() {
           <motion.button
             className="home-page__settings"
             type="button"
-            onClick={() => {
-              dismissToast();
-              setIsSettingsOpen(true);
-            }}
+            onClick={openSettings}
             whileTap={{ scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 520, damping: 34 }}
             aria-label="Open media library and settings"
@@ -142,7 +144,7 @@ export function HomePage() {
         </section>
 
         <section className="home-page__media-stage" aria-label="Current media">
-          <MusicPlayer />
+          <MusicPlayer onOpenSettings={openSettings} />
         </section>
 
         <SessionStatsPanel />
