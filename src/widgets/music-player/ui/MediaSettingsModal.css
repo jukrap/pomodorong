@@ -264,7 +264,7 @@
 
 .media-settings__add-panel {
   padding: 20px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .media-settings__section-heading {
@@ -315,12 +315,18 @@
 }
 
 .media-settings__list {
+  position: relative;
   min-height: 0;
+  overflow: auto;
+  padding-right: 3px;
+  contain: paint;
+}
+
+.media-settings__list-content {
+  min-width: 0;
   display: grid;
   align-content: start;
   gap: 10px;
-  overflow: auto;
-  padding-right: 3px;
 }
 
 .media-settings__track,
@@ -529,6 +535,24 @@
   .media-settings__add-panel {
     order: -1;
   }
+
+  .media-settings__workspace {
+    align-content: start;
+    align-items: start;
+    grid-auto-rows: max-content;
+    overflow: auto;
+  }
+
+  .media-settings__playlist,
+  .media-settings__add-panel {
+    min-height: auto;
+  }
+
+  .media-settings__list {
+    overflow: visible;
+    padding-right: 0;
+    contain: none;
+  }
 }
 
 @media (max-width: 760px) {
@@ -565,7 +589,6 @@
 
   .media-settings__workspace {
     padding-bottom: 22px;
-    overflow: auto;
   }
 
   .media-settings__playlist,

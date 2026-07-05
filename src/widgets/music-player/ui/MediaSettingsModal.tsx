@@ -386,14 +386,16 @@ export function MediaSettingsModal({
               className="media-settings__list"
               data-testid="media-track-list"
             >
-              <AnimatePresence initial={false} mode="popLayout">
+              <motion.div
+                className="media-settings__list-content"
+                key={activeMode}
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: shouldReduceMotion ? 0.01 : 0.16 }}
+              >
                 {tracks.length === 0 ? (
                   <motion.div
                     className="media-settings__empty"
-                    key="empty"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
                   >
                     <strong>No videos in this library.</strong>
                     <span>The timer still works without media.</span>
@@ -403,18 +405,13 @@ export function MediaSettingsModal({
                     <motion.article
                       className="media-settings__track"
                       key={track.videoId}
-                      layout
                       initial={
                         shouldReduceMotion
                           ? { opacity: 0 }
                           : { opacity: 0, y: 8 }
                       }
                       animate={{ opacity: 1, y: 0 }}
-                      exit={
-                        shouldReduceMotion
-                          ? { opacity: 0 }
-                          : { opacity: 0, x: -14 }
-                      }
+                      transition={{ duration: shouldReduceMotion ? 0.01 : 0.14 }}
                     >
                       <img
                         src={track.thumbnailUrl}
@@ -456,7 +453,7 @@ export function MediaSettingsModal({
                     </motion.article>
                   ))
                 )}
-              </AnimatePresence>
+              </motion.div>
             </div>
           </section>
 

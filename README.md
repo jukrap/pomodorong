@@ -1,56 +1,69 @@
 # pomoDORONG
 
-pomoDORONG은 외부 영상과 음원을 함께 쓰는 뽀모도로 타이머입니다. 작업 시간과 휴식 시간을 나누고, 각 모드에 맞는 재생 목록을 전환해 공부나 작업 흐름을 이어가도록 돕는 것을 목표로 합니다.
+pomoDORONG is a focused Pomodoro web app built around external video and music. It keeps the timer first, then switches the media stack between work and break sessions so the whole flow stays lightweight and local.
 
-현재 프로젝트는 재정비 중입니다. 기존 시제품은 아래 기술 스택으로 만들어졌고, 디자인과 기능은 새 방향에 맞춰 다시 설계할 예정입니다.
+The app is being rebuilt as a static, client-first product. There is no account system, paid backend, database, or API key requirement in the current direction.
 
-## 핵심 방향
+## Features
 
-- 작업 모드와 휴식 모드에 따라 외부 영상 또는 음원이 바뀌는 타이머
-- 무료 정적 배포를 우선하는 클라이언트 중심 구조
-- 사용자 설정과 재생 목록은 우선 브라우저 저장소에 보관
-- 선택적으로 유튜브 주소를 직접 추가하고 모드별 재생 목록을 관리
-- 가벼운 3차원 집중 화면을 실험
-- 모바일과 데스크톱에서 모두 쓰기 쉬운 조용한 작업 도구
+- Work and break Pomodoro modes with preset and custom durations
+- Mode-specific YouTube media stacks
+- Local playlist editing with URL or video ID input
+- Local volume, timer, playlist, and session stats persistence
+- Current media dock with next, retry, and YouTube fallback actions
+- Desktop and mobile responsive layout
+- Subtle synth waveform background for atmosphere
 
-## 현재 상태
+## Product Direction
 
-- 기본 타이머, 프리셋, 작업/휴식 전환은 구현되어 있습니다.
-- YouTube IFrame API 기반 재생과 모드별 재생 목록은 실험 구현 상태입니다.
-- 사용자 트랙 추가, 재생 목록 편집, 드래그 앤 드롭, 통계, 3D 화면은 재설계 대상입니다.
-- 공개 서버나 유료 백엔드는 아직 사용하지 않습니다.
+pomoDORONG is intended to stay simple to deploy and easy to reset:
 
-## 기술 스택
+- Static hosting first, with Vercel as the expected free deployment target
+- Browser storage first, using versioned localStorage keys
+- YouTube URL parsing instead of YouTube Data API usage
+- Manual metadata entry instead of API-key-based track lookup
+- Future focus scene experiments with Three.js only when they improve the timer experience
+
+## Tech Stack
 
 - React 19
 - TypeScript
 - Vite
 - Zustand
+- Motion
 - YouTube IFrame API
-- Vercel 정적 배포
+- Geist Variable via Fontsource
 
-나중에 3차원 화면을 만들 때는 Three.js 계열 도구를 우선 살펴봅니다.
-
-## 로컬 실행
+## Local Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-기본 개발 서버는 `http://localhost:5173`에서 열립니다.
+The default development server runs at `http://localhost:5173`.
 
-## 검증
+## Verification
 
 ```bash
 npm run lint
 npm run build
 ```
 
-## 배포 방향
+## Data And Privacy
 
-Vercel 무료 정적 배포를 기본으로 둡니다. 서버 함수, 데이터베이스, 인증, 외부 API 키가 필요한 기능은 비용과 운영 부담을 검토한 뒤 선택 기능으로 분리합니다.
+All user data is saved on the current device only. Settings, media stacks, playback state, and basic session stats are stored in browser localStorage. Clearing site data resets the app.
 
-## 라이선스
+## Deployment
+
+The app is designed for static deployment. Build the production assets with:
+
+```bash
+npm run build
+```
+
+The generated files are written to `dist/`.
+
+## License
 
 MIT

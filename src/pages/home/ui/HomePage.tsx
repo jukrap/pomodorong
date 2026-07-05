@@ -11,7 +11,7 @@ import {
   type ToastMessage,
   type ToastTone,
 } from '../../../shared/ui/Toast/Toast';
-import { AmbientAudioField } from './AmbientAudioField';
+import { SynthWaveField } from './SynthWaveField';
 import './HomePage.css';
 
 export function HomePage() {
@@ -41,6 +41,15 @@ export function HomePage() {
     }, 2800);
   }, []);
 
+  const dismissToast = useCallback(() => {
+    if (toastTimeoutRef.current !== null) {
+      window.clearTimeout(toastTimeoutRef.current);
+      toastTimeoutRef.current = null;
+    }
+
+    setToast(null);
+  }, []);
+
   useEffect(() => {
     return () => {
       if (toastTimeoutRef.current !== null) {
@@ -57,6 +66,10 @@ export function HomePage() {
 
     if (!shouldNotify) {
       lastPlaybackToastRef.current = null;
+      return;
+    }
+
+    if (isSettingsOpen) {
       return;
     }
 
@@ -79,11 +92,11 @@ export function HomePage() {
     }, 0);
 
     return () => window.clearTimeout(timeout);
-  }, [playbackMessage, playbackStatus, showToast]);
+  }, [isSettingsOpen, playbackMessage, playbackStatus, showToast]);
 
   return (
     <div className={`home-page home-page--${mode}`}>
-      <AmbientAudioField />
+      <SynthWaveField />
 
       <header className="home-page__header">
         <div className="home-page__brand">
@@ -107,7 +120,10 @@ export function HomePage() {
           <motion.button
             className="home-page__settings"
             type="button"
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => {
+              dismissToast();
+              setIsSettingsOpen(true);
+            }}
             whileTap={{ scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 520, damping: 34 }}
             aria-label="Open media library and settings"

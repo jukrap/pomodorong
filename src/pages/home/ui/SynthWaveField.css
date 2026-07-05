@@ -1,0 +1,60 @@
+.synth-wave-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.13;
+  pointer-events: none;
+}
+
+.synth-wave-field__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.synth-wave-field__wave {
+  fill: none;
+  stroke: url('#synth-wave-gradient');
+  stroke-dasharray: 18 30;
+  stroke-linecap: round;
+  stroke-width: 1.5;
+  transform-origin: center;
+  animation: synth-wave-drift 18s linear infinite;
+}
+
+.synth-wave-field__wave--1 {
+  opacity: 0.58;
+}
+
+.synth-wave-field__wave--2 {
+  opacity: 0.35;
+  stroke-dasharray: 10 36;
+  animation-duration: 24s;
+  animation-direction: reverse;
+}
+
+.synth-wave-field__wave--3 {
+  opacity: 0.28;
+  stroke-dasharray: 4 26;
+  animation-duration: 15s;
+}
+
+@keyframes synth-wave-drift {
+  to {
+    stroke-dashoffset: -240;
+    transform: translate3d(28px, -8px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .synth-wave-field__wave {
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .synth-wave-field {
+    opacity: 0.09;
+  }
+}
