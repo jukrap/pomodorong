@@ -49,6 +49,22 @@
   letter-spacing: 0;
 }
 
+.home-page__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.home-page__brand-mark {
+  width: 34px;
+  height: 34px;
+  display: block;
+  border-radius: 12px;
+  box-shadow:
+    -4px -4px 10px rgba(255, 255, 255, 0.8),
+    5px 7px 14px rgba(23, 34, 51, 0.1);
+}
+
 .home-page__brand h1 span {
   font-weight: 470;
 }
@@ -213,6 +229,16 @@
 
   .home-page__brand h1 {
     font-size: 27px;
+  }
+
+  .home-page__brand {
+    gap: 9px;
+  }
+
+  .home-page__brand-mark {
+    width: 31px;
+    height: 31px;
+    border-radius: 11px;
   }
 
   .home-page__status {

@@ -105,6 +105,12 @@ export function HomePage() {
 
       <header className="home-page__header">
         <div className="home-page__brand">
+          <img
+            className="home-page__brand-mark"
+            src="/pomodorong-icon.svg"
+            alt=""
+            aria-hidden="true"
+          />
           <h1>
             <span>pomo</span>
             <strong>DORONG</strong>
